@@ -1,0 +1,331 @@
+<title>Kinnesto Launch Campaign</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: Kinnesto's own "Lime & Plum" brand, a long single page with a sticky section bar; ink outlines + hard shadows only on cards that matter. */
+:root{
+  --paper:#FBF7EF; --card:#FFFFFF; --ink:#17112B; --muted:#5B5470; --line:#E3DACB;
+  --lime:#CCFF4D; --lilac:#BBA6FF; --pink:#FF5FA2; --violet:#6C3BFF; --plum:#2A1660; --onlime:#17112B;
+  --display:'Bricolage Grotesque', 'Arial Black', system-ui, sans-serif;
+  --body:'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --shadow:4px 4px 0 var(--ink);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#140F24; --card:#1E1735; --ink:#F3EEFF; --muted:#B4ABCF; --line:#352B55; --violet:#A98BFF; --plum:#0C0818; --shadow:4px 4px 0 #000; color-scheme:dark } }
+:root[data-theme="dark"]{ --paper:#140F24; --card:#1E1735; --ink:#F3EEFF; --muted:#B4ABCF; --line:#352B55; --violet:#A98BFF; --plum:#0C0818; --shadow:4px 4px 0 #000; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:16px/1.65 var(--body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3{font-family:var(--display);line-height:1.08;letter-spacing:-.02em;text-wrap:balance;margin:0}
+h1{font-size:clamp(40px,7vw,76px)} h2{font-size:clamp(28px,4.2vw,42px);margin-bottom:8px} h3{font-size:20px}
+p{max-width:68ch} .muted{color:var(--muted)}
+.mark{background:var(--lime);color:var(--onlime);border:3px solid var(--ink);border-radius:10px;padding:0 .18em;display:inline-block;transform:rotate(-1.5deg)}
+.mark.p{background:var(--pink)}
+header{padding-block:44px 28px}
+.eyebrow{font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--violet)}
+.lead{font-size:19px;color:var(--muted);margin-top:16px}
+nav.bar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--paper);border-bottom:2px solid var(--ink)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--paper)}
+nav.bar .wrap{display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.bar a{flex:none;text-decoration:none;color:var(--ink);font-weight:700;font-size:14px;padding:6px 12px;border-radius:999px;border:2px solid transparent}
+nav.bar a:hover,nav.bar a:focus-visible{border-color:var(--ink);background:var(--lime);color:var(--onlime);outline:none}
+section{padding-block:48px 8px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.card{background:var(--card);border:2px solid var(--ink);box-shadow:var(--shadow);border-radius:18px;padding:18px;min-width:0}
+.card.l{background:var(--lime);color:var(--onlime)} .card.v{background:var(--lilac);color:#17112B} .card.k{background:var(--pink);color:#17112B}
+.card.l .muted,.card.v .muted,.card.k .muted{color:#3D3653}
+.card h3{margin-bottom:6px}
+.stat{font-family:var(--display);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-weight:800;font-size:12px;border:2px solid var(--ink);border-radius:999px;padding:1px 9px;background:var(--card)}
+ul{padding-left:1.1em} li{margin:4px 0}
+.phases{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.phase .when{font-weight:800;color:var(--violet);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+.tablewrap{overflow-x:auto;border:2px solid var(--ink);border-radius:16px;box-shadow:var(--shadow);background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:800;background:var(--lime);color:var(--onlime);position:sticky;top:0}
+td.date{white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums}
+tr.wk td{background:var(--plum);color:#fff;font-weight:800;font-family:var(--display);font-size:16px}
+.copy{position:relative;background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:16px 16px 14px;margin-top:14px}
+.copy .lab{font-weight:800;font-size:13px;color:var(--violet);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;padding-right:90px}
+.copy pre{white-space:pre-wrap;font:15px/1.6 var(--body);margin:0;color:var(--ink)}
+.copy button{position:absolute;top:12px;right:12px;font:800 13px var(--body);border:2px solid var(--ink);background:var(--lime);color:var(--onlime);border-radius:999px;padding:4px 12px;cursor:pointer}
+.copy button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.creatives{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.creatives figure{margin:0}
+.creatives img{width:100%;aspect-ratio:4/5;object-fit:cover;border:2px solid var(--ink);border-radius:14px;box-shadow:var(--shadow);display:block}
+.creatives figcaption{font-size:14px;margin-top:10px;color:var(--muted)}
+.callout{border-left:6px solid var(--pink);background:var(--card);padding:12px 16px;border-radius:0 12px 12px 0;margin-top:16px}
+footer{padding-block:56px 40px;color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion: no-preference){ .copy button{transition:transform .1s} .copy button:active{transform:translate(2px,2px)} }
+</style>
+
+<header class="wrap">
+  <div class="eyebrow">Launch plan · 30 days · Bengaluru first</div>
+  <h1>Find your <span class="mark">place.</span><br>Find your <span class="mark p">people.</span></h1>
+  <p class="lead">Everything needed to launch kinnesto.com: who we’re talking to, what we say, where we say it, a day-by-day calendar from 11 Nov to 15 Dec 2026, copy you can paste, four ready creatives, a budget and how we’ll know it’s working.</p>
+</header>
+
+<nav class="bar" aria-label="Sections"><div class="wrap">
+  <a href="#goals">Goals</a><a href="#audience">Audience</a><a href="#message">Message</a><a href="#plan">Phases</a><a href="#channels">Channels</a><a href="#calendar">Calendar</a><a href="#copy">Copy</a><a href="#creatives">Creatives</a><a href="#budget">Budget</a><a href="#measure">Measure</a><a href="#rules">Rules</a>
+</div></nav>
+
+<main class="wrap">
+
+<section id="goals">
+  <h2>The goal</h2>
+  <p>A marketplace is only useful when both sides are there. So we launch in <strong>one city</strong> and make it feel full: places first, then people. Bengaluru has the most flatsharing, the most new-joiners every month, and our seed listings. Pune follows in January once these numbers hold.</p>
+  <div class="grid" style="margin-top:18px">
+    <div class="card l"><div class="stat">150</div><h3>live listings</h3><p class="muted">PGs, flats, co-living and BnBs in Bengaluru before we push hard on seekers.</p></div>
+    <div class="card"><div class="stat">1,500</div><h3>sign-ups</h3><p class="muted">With 60% finishing their profile, so the vibe score has something to work with.</p></div>
+    <div class="card v"><div class="stat">300</div><h3>matches + accepted requests</h3><p class="muted">The number that proves the product works.</p></div>
+    <div class="card"><div class="stat">&lt;₹40</div><h3>cost per sign-up</h3><p class="muted">Blended across paid channels. Organic should carry most of the volume.</p></div>
+  </div>
+  <p class="muted" style="margin-top:14px">These are targets for 15 Dec 2026, not forecasts. Review them every Monday and adjust.</p>
+</section>
+
+<section id="audience">
+  <h2>Who we’re talking to</h2>
+  <p>Gen Z is the core, but the copy stays plain and friendly so it works for everyone who rents.</p>
+  <div class="grid" style="margin-top:18px">
+    <div class="card"><span class="tag">Core · 18–24</span><h3 style="margin-top:8px">Students &amp; interns</h3><p class="muted">Need a hostel or PG near college or their first office, on a tight budget. Live on Instagram and WhatsApp. Fear: ending up with a nightmare roommate.</p></div>
+    <div class="card"><span class="tag">Core · 22–30</span><h3 style="margin-top:8px">First-jobbers &amp; movers</h3><p class="muted">Just relocated to Bengaluru for work. Want a decent flatshare in Koramangala, HSR or Whitefield fast. Hate brokers and spam calls. On Instagram, LinkedIn, Reddit.</p></div>
+    <div class="card"><span class="tag">Supply</span><h3 style="margin-top:8px">Owners, PGs &amp; hosts</h3><p class="muted">PG operators, people with a spare room, small co-living brands, BnB hosts. Want reliable tenants without paying brokerage. Reach them on WhatsApp, Facebook groups and in person.</p></div>
+    <div class="card"><span class="tag">Secondary</span><h3 style="margin-top:8px">Couples &amp; families</h3><p class="muted">Want an entire flat, or a short BnB stay while house-hunting in a new city. Reach through Google Search and Facebook.</p></div>
+  </div>
+</section>
+
+<section id="message">
+  <h2>What we say</h2>
+  <div class="card l" style="margin-top:14px"><h3>One line</h3><p style="font-size:20px;margin:6px 0 0"><strong>Swipe on rooms and roommates. Kinnesto matches you by budget, timing and how you actually live, with no brokers.</strong></p></div>
+  <div class="grid" style="margin-top:16px">
+    <div class="card"><h3>1 · Vibe match</h3><p class="muted">Night owl or 6am runner? Veg or biryani Sundays? Every card shows a match % and the reasons. Proof: the score on screen.</p></div>
+    <div class="card"><h3>2 · No brokers</h3><p class="muted">Chat directly with owners and flatmates. Free for everyone. Proof: no fees anywhere in the app.</p></div>
+    <div class="card"><h3>3 · Every kind of home</h3><p class="muted">Flats, PGs, hostels, co-living and BnB stays in one place. Proof: the five tabs on the Places screen.</p></div>
+    <div class="card"><h3>4 · Safer by design</h3><p class="muted">Area shown, never the exact address. Block &amp; report in two taps. Clear safety tips. Never claim “verified” until verification exists.</p></div>
+  </div>
+  <p style="margin-top:16px"><strong>Voice:</strong> warm, quick, a little cheeky, never cringe. Hinglish is welcome in Reels and captions (“Flat mila? Flatmate bhi milega.”), plain English on ads and the website.</p>
+</section>
+
+<section id="plan">
+  <h2>Four phases</h2>
+  <div class="phases" style="margin-top:16px">
+    <div class="card phase"><div class="when">11–15 Nov · Prep</div><h3>Seed the supply</h3><ul><li>Personally onboard 50 Bengaluru PGs, hosts and spare rooms (WhatsApp script below, plus walking visits in Koramangala, HSR, BTM and Whitefield).</li><li>Set up Instagram @kinnesto, a Facebook page, LinkedIn page and Google Business Profile.</li><li>Recruit 10 college ambassadors (Christ, RV, PES, BMS, NMIMS Bengaluru).</li><li>Add analytics and UTM tracking.</li></ul></div>
+    <div class="card phase l"><div class="when">16–22 Nov · Launch week</div><h3>Make noise</h3><ul><li>Founder launch post on LinkedIn and Instagram.</li><li>Daily Reels (scripts below).</li><li>Posts in flatshare groups and r/bangalore, following each group’s rules.</li><li>Switch on Google Search and Meta ads at a small daily budget.</li></ul></div>
+    <div class="card phase"><div class="when">23 Nov – 6 Dec · Grow</div><h3>Double down on what works</h3><ul><li>Move budget to the best ad sets and keywords.</li><li>5 micro-influencer collabs (5k–50k followers: Bengaluru living, student life, relocation).</li><li>Posters with QR codes near tech parks and colleges.</li><li>“Bring your flatmate” referral push.</li></ul></div>
+    <div class="card phase v"><div class="when">7–15 Dec · Prove</div><h3>Stories and retention</h3><ul><li>Share real match stories (with permission).</li><li>Re-engage unfinished profiles.</li><li>Press pitch to YourStory, Inc42 and Bangalore Mirror.</li><li>Write up results and decide on the Pune launch.</li></ul></div>
+  </div>
+</section>
+
+<section id="channels">
+  <h2>Where we show up</h2>
+  <div class="tablewrap" style="margin-top:16px"><table>
+    <thead><tr><th>Channel</th><th>Role</th><th>What we do</th><th>Cadence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Instagram Reels</strong></td><td>Awareness (Gen Z)</td><td>Relatable flatmate skits, app screen recordings, vibe-check polls in Stories</td><td>5 Reels/week, Stories daily</td></tr>
+      <tr><td><strong>WhatsApp</strong></td><td>Supply + referrals</td><td>1:1 outreach to PG owners; shareable invite messages; a Kinnesto Bengaluru broadcast channel</td><td>Daily during prep</td></tr>
+      <tr><td><strong>Facebook groups</strong></td><td>Seekers + supply</td><td>Helpful posts in “Flats and Flatmates Bangalore”-type groups, only where self-promotion is allowed</td><td>3/week</td></tr>
+      <tr><td><strong>Google Search Ads</strong></td><td>High intent</td><td>Area + type keywords sending people to the city page /in/bengaluru</td><td>Always on, ₹250–400/day</td></tr>
+      <tr><td><strong>Meta Ads</strong></td><td>Reach + retargeting</td><td>The four creatives below, 18–30, Bengaluru, interests in relocation and student life</td><td>Always on, ₹300–500/day</td></tr>
+      <tr><td><strong>LinkedIn</strong></td><td>New joiners</td><td>Founder story; offer HR teams a free “relocation buddy” link for new hires</td><td>2/week</td></tr>
+      <tr><td><strong>Reddit</strong></td><td>Credibility</td><td>One honest founder post in r/bangalore (check rules, disclose you built it), then answer questions</td><td>Launch week + replies</td></tr>
+      <tr><td><strong>Campus ambassadors</strong></td><td>Students</td><td>Each shares a personal invite link; rewards for 25+ sign-ups</td><td>Ongoing</td></tr>
+      <tr><td><strong>SEO</strong></td><td>Free, compounding</td><td>15 city pages are live. Next: area pages such as “PG in HSR Layout”</td><td>Monthly</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="calendar">
+  <h2>Calendar</h2>
+  <p class="muted">Posting times that tend to work for Indian Instagram audiences: 1–2 pm and 8–10 pm IST. Adjust after week 1 using your own insights.</p>
+  <div class="tablewrap" style="margin-top:14px"><table>
+    <thead><tr><th>Date</th><th>Channel</th><th>What</th><th>Hook / notes</th></tr></thead>
+    <tbody>
+      <tr class="wk"><td colspan="4">Prep · 11–15 Nov</td></tr>
+      <tr><td class="date">Wed 11 Nov</td><td>Setup</td><td>Create @kinnesto on Instagram, Facebook, LinkedIn; Google Business Profile</td><td>Same icon, bio: “Swipe on rooms and roommates. No brokers. 🏠💚 kinnesto.com”</td></tr>
+      <tr><td class="date">Wed 11 Nov</td><td>WhatsApp</td><td>Start PG/host outreach (target 15 a day)</td><td>Owner script in Copy</td></tr>
+      <tr><td class="date">Thu 12 Nov</td><td>Instagram</td><td>Teaser post: creative 01</td><td>“Your next flatmate shouldn’t be a gamble. Something’s coming 16/11.”</td></tr>
+      <tr><td class="date">Fri 13 Nov</td><td>Campus</td><td>Ambassador sign-ups open</td><td>Ambassador DM in Copy</td></tr>
+      <tr><td class="date">Sat 14 Nov</td><td>Offline</td><td>Walk Koramangala + HSR: list PGs in person</td><td>Help owners post on the spot; take photos for them</td></tr>
+      <tr><td class="date">Sun 15 Nov</td><td>Instagram</td><td>Story poll: “Night owl or early bird?”</td><td>Builds the vibe-match idea before launch</td></tr>
+      <tr class="wk"><td colspan="4">Launch week · 16–22 Nov</td></tr>
+      <tr><td class="date">Mon 16 Nov</td><td>LinkedIn + Instagram</td><td>Founder launch post; Reel 2 (swipe demo)</td><td>“I built a dating app… for finding flatmates.”</td></tr>
+      <tr><td class="date">Mon 16 Nov</td><td>Ads</td><td>Switch on Google Search + Meta</td><td>Copy below; UTMs on every link</td></tr>
+      <tr><td class="date">Tue 17 Nov</td><td>Instagram</td><td>Reel 1: flatmate red flags</td><td>Comment bait: “Tell us your worst flatmate story”</td></tr>
+      <tr><td class="date">Wed 18 Nov</td><td>Reddit</td><td>r/bangalore founder post</td><td>Honest, asks for feedback; reply to every comment</td></tr>
+      <tr><td class="date">Thu 19 Nov</td><td>Instagram</td><td>Reel 3: broker vs Kinnesto; carousel of creative 02</td><td>“No brokers. No spam calls. Just vibes.”</td></tr>
+      <tr><td class="date">Fri 20 Nov</td><td>Facebook groups</td><td>Helpful post with link to /in/bengaluru</td><td>Group post in Copy</td></tr>
+      <tr><td class="date">Sat 21 Nov</td><td>Instagram</td><td>Reel 4: vibe check quiz</td><td>Duet/remix friendly</td></tr>
+      <tr><td class="date">Sun 22 Nov</td><td>Review</td><td>Week 1 numbers; pause weakest ads</td><td>See Measure</td></tr>
+      <tr class="wk"><td colspan="4">Grow · 23 Nov – 6 Dec</td></tr>
+      <tr><td class="date">Mon 23 Nov</td><td>Instagram</td><td>Creative 03 as ad + post</td><td>“PG in Koramangala? Swipe right.”</td></tr>
+      <tr><td class="date">Tue 24 Nov</td><td>Influencers</td><td>Brief 5 micro-creators</td><td>Brief in Copy; #ad / #collab required</td></tr>
+      <tr><td class="date">Wed 25 Nov</td><td>LinkedIn</td><td>Post to HR/People teams about new-joiner relocation</td><td>Offer a free shareable link</td></tr>
+      <tr><td class="date">Fri 27 Nov</td><td>Offline</td><td>QR posters: Manyata, ORR, Electronic City, colleges</td><td>Poster = creative 01 + QR to kinnesto.com/?utm_source=poster</td></tr>
+      <tr><td class="date">Mon 30 Nov</td><td>Instagram</td><td>Creative 04 for hosts; Reel 5 (owner)</td><td>Only use real owner stories, with permission</td></tr>
+      <tr><td class="date">1–6 Dec</td><td>All</td><td>Creator posts go live; referral push “Bring your flatmate”</td><td>Repost creator content to Stories</td></tr>
+      <tr class="wk"><td colspan="4">Prove · 7–15 Dec</td></tr>
+      <tr><td class="date">Mon 7 Dec</td><td>Instagram</td><td>First real match story</td><td>Ask happy users after a successful chat</td></tr>
+      <tr><td class="date">Wed 9 Dec</td><td>Email/WhatsApp</td><td>Nudge people who didn’t finish their profile</td><td>“3 questions and your vibe score is ready”</td></tr>
+      <tr><td class="date">Thu 10 Dec</td><td>PR</td><td>Pitch YourStory, Inc42, Bangalore Mirror</td><td>Press pitch in Copy, with launch numbers</td></tr>
+      <tr><td class="date">Tue 15 Dec</td><td>Review</td><td>Final numbers; go/no-go for Pune</td><td>Decision memo</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="copy">
+  <h2>Copy, ready to paste</h2>
+
+  <h3 style="margin-top:22px">Reel scripts</h3>
+  <div class="copy"><div class="lab">Reel 1 · Flatmate red flags (15–20 s)</div><button type="button">Copy</button><pre>On-screen: "POV: you picked your flatmate from a WhatsApp group"
+Shots: dishes piling up (Day 3) · 2am karaoke (Day 7) · "bro my cousin is staying for a month" (Day 12)
+Cut to phone: swiping on Kinnesto, card shows "92% vibe · Both early birds · Neat freaks"
+On-screen: "Or… match by vibe first."
+End card: kinnesto.com · Swipe on rooms and roommates
+Caption: Tell us your worst flatmate story 👇 (we built Kinnesto because of ours) #bangalore #flatmates #pglife</pre></div>
+  <div class="copy"><div class="lab">Reel 2 · “I built a dating app for flatmates” (20–30 s, founder to camera)</div><button type="button">Copy</button><pre>Hook (0–2 s): "I made a dating app… but for finding flatmates."
+2–10 s: screen recording: swipe right on a person, "It's a match: Roomies? 🏡"
+10–20 s: show the vibe score reasons: "Both veg, both night owls, similar budget"
+20–25 s: Places tab: PGs, flats, hostels, BnBs. "And no brokers. Free."
+CTA: "It's live in Bengaluru. Link in bio."
+Caption: Flat mila? Flatmate bhi milega. 😌 Live now in Bengaluru, kinnesto.com</pre></div>
+  <div class="copy"><div class="lab">Reel 3 · Broker vs Kinnesto (split screen, 15 s)</div><button type="button">Copy</button><pre>Left "Broker": 14 missed calls · "1 month brokerage" · "Sir flat already gone"
+Right "Kinnesto": swipe → host accepts → chat open
+Text: "No brokers. No spam calls. Just vibes."
+Caption: Which side are you on? 😅 Free on kinnesto.com</pre></div>
+  <div class="copy"><div class="lab">Reel 4 · Vibe check (interactive, 15 s)</div><button type="button">Copy</button><pre>Text cards, 1 s each: "Night owl or early bird?" · "Veg or non-veg?" · "Guests every weekend or never?" · "Neat freak or relaxed?"
+Final: "Kinnesto turns these into a match score for your next flatmate."
+Caption: Comment your 4 answers. We'll tell you your flatmate type 👀</pre></div>
+  <div class="copy"><div class="lab">Reel 5 · Owner story (use only with a real host and their permission)</div><button type="button">Copy</button><pre>Host to camera: "I had a spare room for 2 months. Brokers wanted a month's rent."
+"Posted it on Kinnesto in 2 minutes. People who liked it showed up with a vibe score."
+"Picked someone who's actually tidy. Zero brokerage."
+Caption: Got a spare room? List it free on kinnesto.com</pre></div>
+
+  <h3 style="margin-top:28px">Google Search ads (Bengaluru)</h3>
+  <div class="copy"><div class="lab">Headlines (each ≤ 30 characters)</div><button type="button">Copy</button><pre>PG in Koramangala, No Broker
+Rooms & PGs in Bengaluru
+Find Flatmates by Vibe
+Zero Brokerage. Free to Use
+Swipe Rooms & Roommates
+Match by Food, Sleep & Budget
+List Your Room for Free
+No Spam Calls, Ever
+Co-living & Hostels Too
+PGs Near HSR & BTM Layout</pre></div>
+  <div class="copy"><div class="lab">Descriptions (each ≤ 90 characters)</div><button type="button">Copy</button><pre>Swipe on PGs, flats, hostels & co-living in Bengaluru. Chat directly with owners. Free.
+Every flatmate shows a vibe score from budget, sleep, food & more. Join free today.
+No brokers, no spam calls. Find your place and your people on Kinnesto.
+Have a spare room or PG? List it free and pick tenants by vibe, not luck.</pre></div>
+  <div class="copy"><div class="lab">Keywords (phrase match) + negatives</div><button type="button">Copy</button><pre>"pg in koramangala" · "pg in hsr layout" · "pg in btm layout" · "pg in whitefield" · "pg in bellandur" · "rooms for rent in bangalore" · "flat sharing bangalore" · "flatmates in bangalore" · "roommate finder bangalore" · "co living bangalore" · "room without broker bangalore" · "hostel in bangalore for working professionals"
+
+Negatives: buy · sale · plot · villa for sale · olx · jobs · hotel booking · resort</pre></div>
+  <p class="muted">Landing page: https://kinnesto.com/in/bengaluru?utm_source=google&amp;utm_medium=cpc&amp;utm_campaign=launch_blr</p>
+
+  <h3 style="margin-top:28px">Meta ads (Instagram + Facebook)</h3>
+  <div class="copy"><div class="lab">Ad A · seekers (creative 01 or 03)</div><button type="button">Copy</button><pre>Primary text: Your next flatmate shouldn't be a gamble. Kinnesto matches you on budget, move-in date and the stuff that actually matters, like sleep, food and cleanliness. Swipe on PGs, flats and flatmates in Bengaluru. Free, no brokers.
+Headline: Swipe on rooms and roommates
+Button: Sign up</pre></div>
+  <div class="copy"><div class="lab">Ad B · hosts (creative 04)</div><button type="button">Copy</button><pre>Primary text: Got a spare room, PG or BnB in Bengaluru? List it free on Kinnesto. People who like it come to you with a vibe score, so you can pick tenants and flatmates who fit. No brokerage, no spam calls.
+Headline: List your room free
+Button: Learn more</pre></div>
+
+  <h3 style="margin-top:28px">Outreach</h3>
+  <div class="copy"><div class="lab">WhatsApp · PG owners and hosts</div><button type="button">Copy</button><pre>Namaste [Name] ji 🙏 I'm [Your name] from Kinnesto, a new app in Bengaluru where students and working people find PGs and flats without brokers.
+
+Listing your PG is completely free. Tenants who like your place send you a request with their profile, and you choose who to accept. No commission, ever.
+
+I can set it up for you in 5 minutes if you send 4–5 photos and the rent. Shall I?
+kinnesto.com</pre></div>
+  <div class="copy"><div class="lab">Facebook group post (only where allowed)</div><button type="button">Copy</button><pre>Moving to Bangalore or looking for a flatmate? 🏠
+
+We built Kinnesto because finding a decent room *and* a flatmate you get along with shouldn't take 40 WhatsApp groups. You swipe on PGs, flats and people, and every card shows a match score (budget, move-in date, sleep, food, cleanliness).
+
+Free, no brokers. Would love feedback from this group: kinnesto.com/in/bengaluru
+(Mods, please remove if this isn't allowed. Happy to answer questions here.)</pre></div>
+  <div class="copy"><div class="lab">Campus ambassador DM</div><button type="button">Copy</button><pre>Hey [Name]! We're launching Kinnesto, a swipe app to find PGs, hostels and flatmates in Bengaluru, and we're looking for 10 campus ambassadors.
+
+You get early access, a certificate, Kinnesto merch, and ₹1,000 Amazon vouchers for every 25 friends who sign up with your link. Takes ~2 hours a week.
+
+Keen? I'll send your personal link 🙌</pre></div>
+  <div class="copy"><div class="lab">LinkedIn · founder launch post</div><button type="button">Copy</button><pre>When I [moved to Bengaluru / looked for a flatmate], I spent weeks in WhatsApp groups and on broker calls, and still ended up with a flatmate who [your real story].
+
+So we built Kinnesto: swipe on rooms *and* roommates. Every flatmate and every listing shows a match score based on budget, move-in date and how you actually live: sleep, food, cleanliness, guests, pets.
+
+Flats, PGs, hostels, co-living and BnB stays, in one place. Free, with no brokers.
+
+It's live in Bengaluru today → kinnesto.com
+If you're hiring people who are relocating, I'd love to give your new joiners a head start. DM me.</pre></div>
+  <div class="copy"><div class="lab">Influencer brief</div><button type="button">Copy</button><pre>Who: Bengaluru creators with 5k–50k followers (city life, student life, relocation, budget living)
+Deliverable: 1 Reel + 2 Stories with link sticker
+Story: your real flat or flatmate experience → try Kinnesto on camera → show your vibe score
+Must: label as #ad or #collab (ASCI rules), don't call profiles "verified", show the Places tab and one match
+Offer: ₹2,000–5,000 or barter, plus a personal UTM link
+Link: kinnesto.com/?utm_source=instagram&utm_medium=influencer&utm_campaign=launch_blr&utm_content=[handle]</pre></div>
+  <div class="copy"><div class="lab">Press pitch</div><button type="button">Copy</button><pre>Subject: A swipe app for flatmates just launched in Bengaluru
+
+Hi [Name],
+Finding a room in Bengaluru usually means brokers, spam calls and a flatmate you know nothing about. Kinnesto, launched on 16 Nov, lets people swipe on PGs, flats, hostels, co-living and BnBs, and on potential flatmates, with a match score built from budget, move-in date and lifestyle.
+
+In its first [X] weeks: [sign-ups], [listings], [matches]. It's free and broker-free.
+Happy to share data on what Bengaluru renters care about most (sleep schedules beat budget more often than you'd think, if that turns out true) and set up a chat with the founder.
+
+[Name] · Kinnesto · kinnesto.com</pre></div>
+</section>
+
+<section id="creatives">
+  <h2>Creatives</h2>
+  <p class="muted">1080 × 1350, sized for Instagram and Facebook feeds. The source files are in <code>kinnesto/marketing/creatives/</code>, and the script that draws them is <code>marketing/make_creatives.py</code>.</p>
+  <div class="creatives" style="margin-top:16px">
+    <figure><img src="creatives/01-flatmate-gamble.png" alt="Your next flatmate shouldn't be a gamble, with lifestyle tags"><figcaption><strong>01 · Flatmate gamble.</strong> Teaser, Ad A, posters.</figcaption></figure>
+    <figure><img src="creatives/02-no-brokers.png" alt="No brokers. No spam calls. Just vibes."><figcaption><strong>02 · No brokers.</strong> Launch week, carousel opener.</figcaption></figure>
+    <figure><img src="creatives/03-pg-koramangala.png" alt="Listing card: PG in Koramangala, swipe right"><figcaption><strong>03 · PG in Koramangala.</strong> Search-intent ad, area variants.</figcaption></figure>
+    <figure><img src="creatives/04-spare-room-hosts.png" alt="Got a spare room? Pick flatmates by vibe, not luck."><figcaption><strong>04 · Spare room.</strong> Host acquisition, Ad B.</figcaption></figure>
+  </div>
+</section>
+
+<section id="budget">
+  <h2>Budget</h2>
+  <div class="grid" style="margin-top:16px">
+    <div class="card"><h3>Lean · ₹30,000 for 30 days</h3><div class="tablewrap" style="box-shadow:none;margin-top:10px"><table style="min-width:0">
+      <tbody><tr><td>Meta ads</td><td style="text-align:right">₹12,000</td></tr><tr><td>Google Search ads</td><td style="text-align:right">₹8,000</td></tr><tr><td>Micro-influencers (mostly barter)</td><td style="text-align:right">₹6,000</td></tr><tr><td>Ambassador rewards</td><td style="text-align:right">₹2,000</td></tr><tr><td>Posters + printing</td><td style="text-align:right">₹2,000</td></tr></tbody></table></div></div>
+    <div class="card l"><h3>Growth · ₹1,00,000 for 30 days</h3><div class="tablewrap" style="box-shadow:none;margin-top:10px"><table style="min-width:0">
+      <tbody><tr><td>Meta ads</td><td style="text-align:right">₹40,000</td></tr><tr><td>Google Search ads</td><td style="text-align:right">₹25,000</td></tr><tr><td>Influencers (5–8 creators)</td><td style="text-align:right">₹20,000</td></tr><tr><td>Ambassador rewards + merch</td><td style="text-align:right">₹8,000</td></tr><tr><td>Posters, events, printing</td><td style="text-align:right">₹7,000</td></tr></tbody></table></div></div>
+  </div>
+  <p class="callout">Start lean. Spend the first ₹10,000 in launch week, then move money only to the ads and creators with the lowest cost per <em>completed profile</em>, not just per click.</p>
+</section>
+
+<section id="measure">
+  <h2>How we’ll know it’s working</h2>
+  <div class="grid" style="margin-top:16px">
+    <div class="card"><h3>Track</h3><ul><li>Sign-ups and profile completion</li><li>Listings posted (by type and area)</li><li>Swipes per active user</li><li>Matches + accepted requests</li><li>Cost per completed profile, by channel</li></ul></div>
+    <div class="card"><h3>UTM format</h3><p class="muted" style="margin:0">utm_source = instagram · google · facebook · reddit · linkedin · poster · ambassador<br>utm_medium = cpc · paid_social · organic · influencer · referral<br>utm_campaign = launch_blr<br>utm_content = creative or handle</p></div>
+    <div class="card v"><h3>Every Monday</h3><ul><li>Pause anything above ₹80 per completed profile</li><li>Shift budget to the top 2 creatives</li><li>Post the week’s numbers in one note</li><li>Pick next week’s Reel topics from comments</li></ul></div>
+  </div>
+  <p class="callout"><strong>Before launch:</strong> the site doesn’t have analytics yet. Add Google Analytics 4 or PostHog plus the Meta Pixel and Google Ads tag, so the numbers above can actually be measured.</p>
+</section>
+
+<section id="rules">
+  <h2>Rules we don’t break</h2>
+  <div class="grid" style="margin-top:16px">
+    <div class="card"><h3>Truth in ads</h3><p class="muted">No fake reviews, numbers or testimonials. Don’t call users “verified” until verification exists. Use real stories only with permission.</p></div>
+    <div class="card"><h3>Influencers</h3><p class="muted">Every paid or gifted post carries #ad or #collab, as ASCI’s influencer guidelines require.</p></div>
+    <div class="card"><h3>Communities</h3><p class="muted">Read each group’s and subreddit’s rules first, disclose that you’re the founder, and never spam.</p></div>
+    <div class="card"><h3>Privacy</h3><p class="muted">Message only people who opted in. Follow the DPDP Act and the privacy policy at kinnesto.com/privacy.</p></div>
+  </div>
+</section>
+
+</main>
+<footer class="wrap">Kinnesto launch campaign · prepared 10 Nov 2026 · kinnesto.com</footer>
+
+<script>
+document.querySelectorAll('.copy button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var pre = btn.parentElement.querySelector('pre');
+    var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1500); };
+    var fallback = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected'; setTimeout(function () { btn.textContent = 'Copy'; }, 1500); };
+    try { navigator.clipboard.writeText(pre.innerText).then(done, fallback); } catch (e) { fallback(); }
+  });
+});
+</script>
