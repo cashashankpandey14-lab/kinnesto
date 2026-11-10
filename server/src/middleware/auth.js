@@ -1,0 +1,34 @@
+const jwt = require('jsonwebtoken');
+const { config } = require('../config');
+const { User } = require('../models');
+
+function signToken(user) {
+  return jwt.sign({ sub: String(user._id) }, config.jwtSecret, { expiresIn: '30d' });
+}
+
+function verifyToken(token) {
+  return jwt.verify(token, config.jwtSecret).sub;
+}
+
+async function requireAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'Not signed in' });
+  try {
+    const user = await User.findById(verifyToken(token));
+    if (!user) return res.status(401).json({ error: 'Account not found' });
+    req.user = user;
+    User.updateOne({ _id: user._id }, { lastActive: new Date() }).catch(() => {});
+    return next();
+  } catch {
+    return res.status(401).json({ error: 'Session expired, please sign in again' });
+  }
+}
+
+// Browsing places is open to everyone signed in; swiping on people needs a finished profile.
+function requireOnboarded(req, res, next) {
+  if (!req.user.onboarded) return res.status(403).json({ error: 'Finish your profile first', code: 'NOT_ONBOARDED' });
+  return next();
+}
+
+module.exports = { signToken, verifyToken, requireAuth, requireOnboarded };

@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "Kinnesto",
+    "slug": "kinnesto",
+    "scheme": "kinnesto",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.kinnesto",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Kinnesto needs your photos so you can add them to your profile and listings."
+      }
+    },
+    "android": {
+      "package": "app.kinnesto",
+      "adaptiveIcon": {
+        "backgroundColor": "#2A1660",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "Kinnesto: flats, PGs, stays & flatmates",
+      "description": "Swipe on flats, PGs, hostels, co-living and BnBs, and match with flatmates who share your vibe."
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#2A1660",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Kinnesto needs your photos so you can add them to your profile and listings."
+        }
+      ],
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

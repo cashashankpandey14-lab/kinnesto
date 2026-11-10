@@ -1,0 +1,27 @@
+# Render Blueprint for the Kinnesto API. In Render: New > Blueprint > pick this repo.
+# You'll be asked for MONGODB_URI (the Atlas connection string); everything else is set here.
+services:
+  - type: web
+    name: kinnesto-api
+    runtime: node
+    region: singapore
+    plan: free
+    rootDir: server
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    domains:
+      - api.kinnesto.com
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: DB_NAME
+        value: kinnesto
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PUBLIC_URL
+        value: https://api.kinnesto.com
+      - key: CORS_ORIGINS
+        value: https://kinnesto.com,https://www.kinnesto.com
