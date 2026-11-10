@@ -32,4 +32,4 @@ services:
       - key: FACEBOOK_APP_SECRET
         sync: false
       - key: ADMIN_EMAILS
-        value: shashank@nevejewels.com
+        value: cashashankpandey14@gmail.com

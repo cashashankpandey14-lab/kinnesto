@@ -50,7 +50,7 @@ indexed. Add a city to both to open it.
 
 ## Admin dashboard
 
-Members whose email is in `ADMIN_EMAILS` (set on Render; `shashank@nevejewels.com`) see **Admin dashboard** on the Me
+Members whose email is in `ADMIN_EMAILS` (set on Render; `cashashankpandey14@gmail.com`) see **Admin dashboard** on the Me
 tab, at `/admin`: growth stats and a 14-day sign-up chart, member search with ban/unban and delete, listing moderation
 (hide/show/delete) and the reports queue. Banned members can't sign in and their listings are hidden. Locally,
 `npm run dev:memory` makes `ananya@demo.kinnesto.app` an admin.
