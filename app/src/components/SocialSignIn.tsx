@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { colors, hard, radius } from '@/lib/theme';
+import { colors, radius } from '@/lib/theme';
 import { Text } from './Text';
 
 declare global {
@@ -106,7 +106,7 @@ export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError:
 
 const styles = StyleSheet.create({
   google: { minHeight: 44, alignItems: 'center' },
-  fb: { height: 46, borderRadius: radius.pill, backgroundColor: '#1877F2', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, ...hard(3) },
+  fb: { height: 46, borderRadius: radius.pill, backgroundColor: '#1877F2', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
   fbText: { color: '#fff', fontWeight: '800', fontSize: 15 },
   or: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 8 },
   line: { flex: 1, height: 2, backgroundColor: colors.line },

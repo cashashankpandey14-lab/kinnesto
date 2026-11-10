@@ -9,6 +9,8 @@ const path = require('path');
   const mongo = await MongoMemoryServer.create({ instance: { port: 27019, launchTimeout: 90000 } });
   process.env.MONGODB_URI = mongo.getUri('kinnesto');
   process.env.DEMO_AUTO_REPLY = 'true';
+  // Sign in as the demo account below to try the admin dashboard locally.
+  process.env.ADMIN_EMAILS = process.env.ADMIN_EMAILS || 'ananya@demo.kinnesto.app';
   console.log(`In-memory MongoDB at ${process.env.MONGODB_URI}`);
 
   spawnSync(process.execPath, [path.join(__dirname, 'seed.js')], { stdio: 'inherit', env: process.env });

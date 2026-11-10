@@ -142,7 +142,7 @@ export default function Chat() {
         <View style={styles.composer}>
           <TextInput value={text} onChangeText={setText} placeholder="Message" placeholderTextColor="#B0A9B8" style={styles.input} multiline onSubmitEditing={() => send()} blurOnSubmit={Platform.OS === 'web'} />
           <Pressable onPress={() => send()} disabled={!text.trim()} style={[styles.send, !text.trim() && { opacity: 0.4 }]} accessibilityLabel="Send">
-            <Ionicons name="send" size={18} color={colors.ink} />
+            <Ionicons name="send" size={18} color="#fff" />
           </Pressable>
         </View>
       </View>
@@ -151,14 +151,14 @@ export default function Chat() {
 }
 
 const styles = StyleSheet.create({
-  listing: { flexDirection: 'row', alignItems: 'center', gap: 12, margin: 12, marginBottom: 0, padding: 10, backgroundColor: colors.lime, borderRadius: radius.md, borderWidth: 2, borderColor: colors.ink },
+  listing: { flexDirection: 'row', alignItems: 'center', gap: 12, margin: 12, marginBottom: 0, padding: 10, backgroundColor: colors.card, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line },
   listingImg: { width: 48, height: 48, borderRadius: 10, backgroundColor: colors.line },
   bubble: { maxWidth: '80%', paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20 },
-  mine: { backgroundColor: colors.violet, borderBottomRightRadius: 6, borderWidth: 2, borderColor: colors.ink },
-  theirs: { backgroundColor: '#fff', borderWidth: 2, borderColor: colors.ink, borderBottomLeftRadius: 6 },
+  mine: { backgroundColor: colors.ink, borderBottomRightRadius: 6 },
+  theirs: { backgroundColor: '#fff', borderWidth: 1, borderColor: colors.line, borderBottomLeftRadius: 6 },
   time: { fontSize: 11, color: colors.muted, marginTop: 2, marginHorizontal: 6 },
-  ice: { backgroundColor: colors.lilac, padding: 14, borderRadius: radius.md, borderWidth: 2, borderColor: colors.ink },
+  ice: { backgroundColor: colors.card, padding: 14, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line },
   composer: { flexDirection: 'row', alignItems: 'flex-end', gap: 10, padding: 12, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: '#fff' },
   input: { flex: 1, maxHeight: 120, backgroundColor: colors.bg, borderRadius: 22, paddingHorizontal: 16, paddingVertical: 10, fontSize: 16, color: colors.ink, borderWidth: 1, borderColor: colors.line },
-  send: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.lime, borderWidth: 2, borderColor: colors.ink, alignItems: 'center', justifyContent: 'center' },
+  send: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.ink, alignItems: 'center', justifyContent: 'center' },
 });

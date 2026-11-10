@@ -1,4 +1,5 @@
 const { lifestyleOf } = require('./compat');
+const { config } = require('../config');
 
 // What the signed-in member sees about themselves.
 function presentMe(u) {
@@ -23,6 +24,7 @@ function presentMe(u) {
     interests: u.interests,
     flatmateGender: u.flatmateGender,
     onboarded: u.onboarded,
+    isAdmin: config.adminEmails.includes(u.email),
   };
 }
 

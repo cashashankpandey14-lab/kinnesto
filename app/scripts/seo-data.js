@@ -1,5 +1,9 @@
 // Content for the static SEO pages. Localities are well-known rental areas; keep intros factual.
+// Cities open on Kinnesto right now get full pages; the rest get a short noindex "coming soon" page.
+const LIVE = ['mumbai'];
+
 module.exports = {
+  LIVE,
   cities: [
     { slug: 'bengaluru', name: 'Bengaluru', alt: 'Bangalore', intro: 'India’s startup and tech capital, where most people move for work and flatshares are the norm.', areas: ['Koramangala', 'HSR Layout', 'Indiranagar', 'Whitefield', 'Marathahalli', 'BTM Layout', 'Electronic City', 'Bellandur', 'Jayanagar', 'JP Nagar', 'Hebbal'] },
     { slug: 'mumbai', name: 'Mumbai', alt: 'Bombay', intro: 'Space is precious and rents are high, so sharing a flat with the right person makes a huge difference.', areas: ['Andheri', 'Powai', 'Bandra', 'Malad', 'Goregaon', 'Lower Parel', 'Thane', 'Vashi', 'Chembur', 'Kandivali'] },
@@ -18,3 +22,4 @@ module.exports = {
     { slug: 'goa', name: 'Goa', alt: 'Goa', intro: 'Workations, digital nomads and long stays: BnBs and shared villas are the way to live here.', areas: ['Panaji', 'Anjuna', 'Assagao', 'Calangute', 'Candolim', 'Vagator', 'Margao'] },
   ],
 };
+module.exports.cities.forEach((c) => (c.live = LIVE.includes(c.slug)));

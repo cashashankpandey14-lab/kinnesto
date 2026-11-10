@@ -27,6 +27,7 @@ const userSchema = new Schema(
     interests: { type: [String], default: [] },
     flatmateGender: { type: String, enum: Object.keys(O.GENDER_PREFS), default: 'any' },
     onboarded: { type: Boolean, default: false },
+    banned: { type: Boolean, default: false },
     blocked: [ref('User')],
     isDemo: { type: Boolean, default: false },
     lastActive: { type: Date, default: Date.now },
@@ -125,6 +126,7 @@ const reportSchema = new Schema(
     listing: ref('Listing'),
     reason: String,
     details: String,
+    status: { type: String, enum: ['open', 'resolved'], default: 'open' },
   },
   { timestamps: true }
 );

@@ -1,7 +1,7 @@
 """Renders every Kinnesto app icon from code, so the artwork can be tweaked and re-run.
 
 Mark: two stacked swipe cards; the front card holds a house with a heart in it
-("swipe for a home, and the people in it"), in the app's "Lime & Plum" palette with ink outlines.
+("swipe for a home, and the people in it"), in the app's "Midnight & Marigold" palette.
 
 Usage (from kinnesto/app):  python design/make_icons.py
 """
@@ -13,8 +13,8 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter
 OUT = Path(__file__).resolve().parent.parent / 'assets'
 SS = 4  # supersampling factor
 
-PLUM, VIOLET = (42, 22, 96), (108, 59, 255)
-INK, LIME, LILAC = (23, 17, 43), (204, 255, 77), (187, 166, 255)
+PLUM, VIOLET = (12, 11, 18), (43, 40, 56)
+INK, LIME, LILAC = (18, 17, 25), (244, 165, 28), (255, 255, 255)
 WHITE = (255, 255, 255)
 
 
@@ -23,7 +23,7 @@ def lerp(a, b, t):
 
 
 def gradient(size):
-    """Diagonal plum → violet, top-left to bottom-right."""
+    """Diagonal near-black → ink, top-left to bottom-right."""
     small = 256
     g = Image.new('RGB', (small, small))
     px = g.load()
@@ -81,10 +81,10 @@ def mark(size, scale=1.0, mono=False):
 
     # Back card peeks out to the right, like the next card in a deck.
     if not mono:
-        out.alpha_composite(card_layer(S, cx + cw * 0.13, cy - ch * 0.02, cw, ch, -11, LILAC, outline=INK))
+        out.alpha_composite(card_layer(S, cx + cw * 0.13, cy - ch * 0.02, cw, ch, -11, LILAC, alpha=70))
 
     # Front card, tilted the other way mid-swipe.
-    front = card_layer(S, cx - cw * 0.05, cy + ch * 0.02, cw, ch, 6, WHITE if mono else LIME, outline=None if mono else INK)
+    front = card_layer(S, cx - cw * 0.05, cy + ch * 0.02, cw, ch, 6, WHITE if mono else LIME)
     hm, door_y = house_mask(S, cx - cw * 0.05, cy + ch * 0.02, cw * 0.6)
     heart = Image.new('L', (S, S), 0)
     ImageDraw.Draw(heart).polygon(heart_points(cx - cw * 0.05, door_y, cw * 0.0088), fill=255)
@@ -96,7 +96,7 @@ def mark(size, scale=1.0, mono=False):
         front.putalpha(ImageChops.subtract(front.getchannel('A'), ImageChops.subtract(hm, heart)))
         out.alpha_composite(front)
     else:
-        # Ink house on the lime card; the heart in the doorway shows the lime through.
+        # Ink house on the marigold card; the heart in the doorway shows the marigold through.
         g = Image.new('RGBA', (S, S), INK + (255,))
         g.putalpha(ImageChops.subtract(hm, heart))
         front.alpha_composite(g)
@@ -105,7 +105,7 @@ def mark(size, scale=1.0, mono=False):
 
 
 def simple_mark(size):
-    """Small sizes (favicon): just the lime house with the heart cut out, no cards."""
+    """Small sizes (favicon): just the marigold house with the heart cut out, no cards."""
     S = size * SS
     out = Image.new('RGBA', (S, S), (0, 0, 0, 0))
     hm, door_y = house_mask(S, S / 2, S / 2, S * 0.62)

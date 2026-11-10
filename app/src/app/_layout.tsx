@@ -1,4 +1,4 @@
-import { BricolageGrotesque_800ExtraBold } from '@expo-google-fonts/bricolage-grotesque';
+import { Sora_600SemiBold, Sora_700Bold } from '@expo-google-fonts/sora';
 import {
   PlusJakartaSans_400Regular,
   PlusJakartaSans_500Medium,
@@ -29,7 +29,8 @@ export default function RootLayout() {
 function Routes() {
   const { ready } = useAuth();
   const [fontsLoaded, fontError] = useFonts({
-    BricolageGrotesque_800ExtraBold,
+    Sora_600SemiBold,
+    Sora_700Bold,
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
     PlusJakartaSans_600SemiBold,
@@ -58,6 +59,7 @@ function Routes() {
       <Stack.Screen name="chat/[id]" options={{ title: '' }} />
       <Stack.Screen name="edit-profile" options={{ title: 'Edit profile' }} />
       <Stack.Screen name="edit-listing" options={{ title: 'Your listing' }} />
+      <Stack.Screen name="admin" options={{ title: 'Admin' }} />
     </Stack>
   );
 }

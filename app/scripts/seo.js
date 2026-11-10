@@ -13,50 +13,52 @@ const dist = path.join(__dirname, '..', 'web-build');
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const CSS = `
-:root{--ink:#17112B;--paper:#FBF7EF;--lime:#CCFF4D;--lilac:#BBA6FF;--pink:#FF5FA2;--violet:#6C3BFF;--plum:#2A1660;--muted:#5b5470}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.65 'Plus Jakarta Sans',system-ui,sans-serif}
-a{color:var(--violet)}.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0}nav .logo{display:flex;align-items:center;gap:10px;font:800 26px 'Bricolage Grotesque',sans-serif;color:var(--ink);text-decoration:none}
-nav img{width:36px;height:36px;border-radius:9px}
-.btn{display:inline-block;padding:12px 22px;border-radius:999px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);font-weight:800;text-decoration:none;color:var(--ink);background:var(--lime)}
-.btn.dark{background:var(--ink);color:var(--lime)}.btn.light{background:#fff}
-h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;line-height:1.08;letter-spacing:-.02em;margin:0 0 14px}
-h1{font-size:clamp(38px,6vw,64px);margin-top:28px}h2{font-size:clamp(28px,4vw,38px);margin-top:56px}h3{font-size:21px}
-.mark{background:var(--lime);border:3px solid var(--ink);border-radius:10px;padding:0 10px;display:inline-block;transform:rotate(-1.5deg)}
-.lead{font-size:19px;max-width:720px;color:#3D3653}.ctas{display:flex;gap:14px;flex-wrap:wrap;margin:26px 0}
-.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{border:2px solid var(--ink);border-radius:999px;padding:6px 14px;background:#fff;font-weight:700;font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{background:#fff;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:20px;padding:20px}.card p{margin:6px 0 0;color:#3D3653;font-size:15px}
-.card.l{background:var(--lime)}.card.p{background:var(--lilac)}.card.k{background:var(--pink)}
-details{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:14px 18px;margin-bottom:12px}summary{font-weight:800;cursor:pointer}
-.legal h2{font-size:26px;margin-top:36px}.legal{max-width:760px}
-footer{background:var(--ink);color:#bdb6d6;margin-top:72px;padding:32px 0;font-size:15px}footer a{color:var(--lime);margin-right:16px}
+:root{--ink:#121119;--ink2:#2B2838;--paper:#F6F5F2;--line:#E5E2DC;--muted:#6C6878;--gold:#F4A51C;--goldtext:#B86E00;--goldsoft:#FFF3DC;--sea:#11615F}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.7 'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+a{color:var(--goldtext)}.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0}nav .logo{display:flex;align-items:center;gap:10px;font:600 24px 'Sora',system-ui,sans-serif;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+nav img{width:34px;height:34px;border-radius:9px}
+.btn{display:inline-block;padding:13px 24px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;color:#fff;background:var(--ink);box-shadow:0 1px 2px rgba(18,17,25,.06),0 2px 8px rgba(18,17,25,.05)}
+.btn.gold{background:var(--gold);color:var(--ink)}.btn.light{background:#fff;color:var(--ink);border:1px solid var(--line)}
+h1,h2,h3{font-family:'Sora',system-ui,sans-serif;font-weight:600;line-height:1.1;letter-spacing:-.03em;margin:0 0 14px;text-wrap:balance}
+h1{font-size:clamp(36px,5.6vw,60px);margin-top:36px}h2{font-size:clamp(26px,3.6vw,36px);margin-top:72px}h3{font-size:19px;letter-spacing:-.01em}
+.accent{color:var(--goldtext)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;color:var(--ink2);margin-top:28px}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:#1E9E6A;display:inline-block}
+.lead{font-size:19px;max-width:700px;color:var(--muted)}.ctas{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:#fff;font-weight:600;font-size:14px;color:var(--ink2);text-decoration:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 1px 2px rgba(18,17,25,.04)}.card p{margin:6px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+.card .n{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-bottom:10px}
+details{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:10px}summary{font-weight:700;cursor:pointer}details p{color:var(--muted);margin:10px 0 0}
+.band{background:var(--ink);color:#fff;border-radius:28px;padding:44px 32px;margin-top:72px;text-align:center}.band h2{margin-top:0}.band p{color:#BDB8CA}
+.legal h2{font-size:24px;margin-top:40px}.legal{max-width:760px}.legal li{margin:6px 0}
+footer{background:#fff;border-top:1px solid var(--line);margin-top:88px;padding:36px 0;font-size:15px;color:var(--muted)}footer a{color:var(--ink2);margin-right:18px;text-decoration:none;font-weight:600}
 `;
 
-function page({ urlPath, title, description, body, jsonLd = [] }) {
+function page({ urlPath, title, description, body, jsonLd = [], noindex = false }) {
   const url = `${SITE}${urlPath}`;
   return `<!DOCTYPE html>
 <html lang="en-IN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
-<link rel="canonical" href="${url}">
-<meta name="theme-color" content="#2A1660">
+<link rel="canonical" href="${url}">${noindex ? '\n<meta name="robots" content="noindex,follow">' : ''}
+<meta name="theme-color" content="#121119">
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/icon.png"><link rel="manifest" href="/site.webmanifest">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Kinnesto"><meta property="og:url" content="${url}">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}">
 <meta property="og:image" content="${SITE}/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>${CSS}</style>
 ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}
 </head><body>
 <div class="wrap"><nav><a class="logo" href="/"><img src="/icon.png" alt="">kinnesto</a><a class="btn light" href="/auth?mode=login">Sign in</a></nav></div>
 <main class="wrap">${body}</main>
 <footer><div class="wrap">
-<p><strong style="color:#fff">Kinnesto</strong> · flats, PGs, hostels, co-living, BnBs and flatmates across India. No brokers.</p>
-<p>${cities.map((c) => `<a href="/in/${c.slug}">${c.name}</a>`).join(' ')}</p>
+<p><strong style="color:var(--ink)">Kinnesto</strong> · flats, PGs, hostels, co-living, stays and flatmates. Live in ${cities.filter((c) => c.live).map((c) => `<a href="/in/${c.slug}">${c.name}</a>`).join(', ')}, more cities soon.</p>
 <p><a href="/about">About</a><a href="/safety">Safety</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/delete-account">Delete account</a></p>
 <p>© ${new Date().getFullYear()} Kinnesto · Made in India</p></div></footer>
 </body></html>`;
@@ -69,7 +71,6 @@ function write(urlPath, html) {
 }
 
 function cityPage(c) {
-  const others = cities.filter((x) => x.slug !== c.slug);
   const a = c.areas;
   const faqs = [
     [`How do I find a PG or flat in ${c.name} without a broker?`, `Create a free Kinnesto profile, pick ${c.name} and the areas you like (for example ${a.slice(0, 3).join(', ')}), then swipe through places. Liking a place sends a request straight to the owner or host, and when they accept you can chat directly. No brokerage.`],
@@ -79,29 +80,29 @@ function cityPage(c) {
     [`Can I list my PG, flat or spare room in ${c.name}?`, `Yes. Post it from the Host tab with photos, rent, deposit and who it suits. People who swipe right on it show up as requests along with their vibe score, so you can choose tenants or flatmates who fit.`],
   ];
   const body = `
-<h1>PG, flats &amp; flatmates in <span class="mark">${c.name}</span></h1>
+<span class="eyebrow"><i></i>Live in ${c.name}</span>
+<h1>PG, flats &amp; flatmates in <span class="accent">${c.name}</span></h1>
 <p class="lead">${esc(c.intro)} On Kinnesto you swipe on rooms <em>and</em> roommates in ${c.name}${c.alt !== c.name ? ` (${c.alt})` : ''}, and every card shows how well it fits your budget, timing and lifestyle.</p>
-<div class="ctas"><a class="btn" href="/auth?mode=register">Find a place in ${c.name}</a><a class="btn dark" href="/auth?mode=register">List your room or PG</a></div>
+<div class="ctas"><a class="btn gold" href="/auth?mode=register">Find a place in ${c.name}</a><a class="btn light" href="/auth?mode=register">List your room or PG</a></div>
 <h2>Popular areas in ${c.name}</h2>
 <div class="chips">${a.map((x) => `<span class="chip">${esc(x)}</span>`).join('')}</div>
 <h2>What you can find in ${c.name}</h2>
 <div class="grid">
-<div class="card l"><h3>🏢 Flats &amp; flatshares</h3><p>Private rooms in shared flats, or whole apartments in ${a[0]}, ${a[1]} and beyond.</p></div>
-<div class="card p"><h3>🛏️ PGs</h3><p>Paying-guest rooms in ${c.name}, often with meals, housekeeping and Wi-Fi included.</p></div>
-<div class="card k"><h3>🎒 Hostels</h3><p>Budget beds for students and interns, by the month.</p></div>
-<div class="card"><h3>🤝 Co-living</h3><p>Managed shared homes with bills, cleaning and community events in one rent.</p></div>
-<div class="card l"><h3>🌴 BnB stays</h3><p>Short stays for house-hunting trips${c.slug === 'goa' ? ', workations and long holidays' : ''}.</p></div>
+<div class="card"><h3>Flats &amp; flatshares</h3><p>Private rooms in shared flats, or whole apartments in ${a[0]}, ${a[1]} and beyond.</p></div>
+<div class="card"><h3>PGs</h3><p>Paying-guest rooms in ${c.name}, often with meals, housekeeping and Wi-Fi included.</p></div>
+<div class="card"><h3>Hostels</h3><p>Budget beds for students and interns, by the month.</p></div>
+<div class="card"><h3>Co-living</h3><p>Managed shared homes with bills, cleaning and community events in one rent.</p></div>
+<div class="card"><h3>BnB stays</h3><p>Short stays for house-hunting trips${c.slug === 'goa' ? ', workations and long holidays' : ''}.</p></div>
 </div>
 <h2>How Kinnesto works</h2>
 <div class="grid">
-<div class="card"><h3>01 · Drop your vibe</h3><p>Budget, move-in date, preferred areas in ${c.name}, and how you live: food, sleep, cleanliness, guests, pets.</p></div>
-<div class="card"><h3>02 · Swipe people &amp; places</h3><p>Every flatmate shows a vibe-match %, every room a fit % with the reasons behind it.</p></div>
-<div class="card"><h3>03 · Match, chat, move in</h3><p>Mutual likes and accepted requests open a chat. No brokers, no spam calls.</p></div>
+<div class="card"><span class="n">1</span><h3>Create your profile</h3><p>Budget, move-in date, preferred areas in ${c.name}, and how you live: food, sleep, cleanliness, guests, pets.</p></div>
+<div class="card"><span class="n">2</span><h3>Swipe on people and places</h3><p>Every flatmate shows a vibe-match %, every room a fit % with the reasons behind it.</p></div>
+<div class="card"><span class="n">3</span><h3>Match and move in</h3><p>Mutual likes and accepted requests open a chat. No brokers, no spam calls.</p></div>
 </div>
 <h2>FAQs: renting in ${c.name}</h2>
 ${faqs.map(([q, ans]) => `<details><summary>${esc(q)}</summary><p>${esc(ans)}</p></details>`).join('\n')}
-<h2>Other cities</h2>
-<div class="chips">${others.map((o) => `<a class="chip" href="/in/${o.slug}">${o.name}</a>`).join('')}</div>`;
+<div class="band"><h2>Your next home in ${c.name} starts here.</h2><p>Create a free profile in two minutes.</p><a class="btn gold" href="/auth?mode=register">Get started</a></div>`;
   return page({
     urlPath: `/in/${c.slug}`,
     title: `PG, Flats & Flatmates in ${c.name} – No Broker | Kinnesto`,
@@ -114,17 +115,31 @@ ${faqs.map(([q, ans]) => `<details><summary>${esc(q)}</summary><p>${esc(ans)}</p
   });
 }
 
+function soonPage(c) {
+  const live = cities.filter((x) => x.live);
+  return page({
+    urlPath: `/in/${c.slug}`,
+    title: `Kinnesto in ${c.name}: coming soon`,
+    description: `Kinnesto is coming to ${c.name}. We're live in ${live.map((x) => x.name).join(', ')} today.`,
+    noindex: true,
+    body: `<span class="eyebrow"><i style="background:var(--gold)"></i>Coming soon</span>
+<h1>Kinnesto is coming to <span class="accent">${c.name}</span>.</h1>
+<p class="lead">We launch city by city so there are real places and real people from day one. ${c.name} is on the list. Today we're live in ${live.map((x) => `<a href="/in/${x.slug}">${x.name}</a>`).join(', ')}.</p>
+<div class="ctas"><a class="btn gold" href="/auth?mode=register">Create a profile</a><a class="btn light" href="/in/${live[0].slug}">Explore ${live[0].name}</a></div>`,
+  });
+}
+
 const legal = (h, html) => `<div class="legal"><h1>${h}</h1><p><em>Last updated: ${TODAY}</em></p>${html}</div>`;
 
 const PAGES = {
   '/about': {
     title: 'About Kinnesto – Find your place, find your people',
     description: 'Kinnesto helps people across India find flats, PGs, hostels, co-living and BnB stays, and match with flatmates by lifestyle. No brokers.',
-    body: `<h1>Find your place. <span class="mark">Find your people.</span></h1>
+    body: `<h1>Find your place. <span class="accent">And the people to share it with.</span></h1>
 <p class="lead">Kinnesto (kin + nest) is built on a simple idea: where you live matters, but who you live with matters just as much.</p>
 <p>Most rental sites stop at the room. We match the people too. Every flatmate profile and every listing shows a match score built from budget, move-in timing and the everyday things that make or break a flatshare: food habits, sleep schedules, cleanliness, guests and pets.</p>
-<p>Kinnesto covers flats, PGs, hostels, co-living spaces and BnB stays across ${cities.length} Indian cities. It’s free, and you deal directly with owners and flatmates, with no brokers in the middle.</p>
-<div class="ctas"><a class="btn" href="/auth?mode=register">Create your profile</a></div>
+<p>Kinnesto covers flats, PGs, hostels, co-living spaces and BnB stays, starting in Mumbai with more cities to follow. It’s free, and you deal directly with owners and flatmates, with no brokers in the middle.</p>
+<div class="ctas"><a class="btn gold" href="/auth?mode=register">Create your profile</a></div>
 <p>Questions or partnership ideas? Write to <a href="mailto:${CONTACT}">${CONTACT}</a>.</p>`,
   },
   '/safety': {
@@ -179,10 +194,10 @@ const PAGES = {
 };
 
 function main() {
-  for (const c of cities) write(`/in/${c.slug}`, cityPage(c));
+  for (const c of cities) write(`/in/${c.slug}`, c.live ? cityPage(c) : soonPage(c));
   for (const [p, def] of Object.entries(PAGES)) write(p, page({ urlPath: p, ...def }));
 
-  const urls = ['/', ...cities.map((c) => `/in/${c.slug}`), ...Object.keys(PAGES)];
+  const urls = ['/', ...cities.filter((c) => c.live).map((c) => `/in/${c.slug}`), ...Object.keys(PAGES)];
   fs.writeFileSync(
     path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
@@ -194,9 +209,9 @@ function main() {
   fs.writeFileSync(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\n${appPaths.map((p) => `Disallow: ${p}`).join('\n')}\n\nSitemap: ${SITE}/sitemap.xml\n`);
   fs.writeFileSync(
     path.join(dist, 'site.webmanifest'),
-    JSON.stringify({ name: 'Kinnesto', short_name: 'Kinnesto', start_url: '/', display: 'standalone', background_color: '#FBF7EF', theme_color: '#2A1660', icons: [{ src: '/icon.png', sizes: '1024x1024', type: 'image/png', purpose: 'any' }] }, null, 2)
+    JSON.stringify({ name: 'Kinnesto', short_name: 'Kinnesto', start_url: '/', display: 'standalone', background_color: '#F6F5F2', theme_color: '#121119', icons: [{ src: '/icon.png', sizes: '1024x1024', type: 'image/png', purpose: 'any' }] }, null, 2)
   );
-  console.log(`seo: ${cities.length} city pages, ${Object.keys(PAGES).length} info pages, sitemap (${urls.length} URLs), robots.txt, manifest`);
+  console.log(`seo: ${cities.filter((c) => c.live).length} live + ${cities.filter((c) => !c.live).length} coming-soon city pages, ${Object.keys(PAGES).length} info pages, sitemap (${urls.length} URLs), robots.txt, manifest`);
 }
 
 module.exports = { main, cities, SITE };

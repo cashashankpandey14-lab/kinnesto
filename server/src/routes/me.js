@@ -1,6 +1,6 @@
 const express = require('express');
 const O = require('../options');
-const { User, Listing, Swipe, Interest, Match, Message } = require('../models');
+const { deleteUserData } = require('../lib/accounts');
 const { presentMe } = require('../lib/present');
 const { photoUpload, savePhoto, deletePhoto } = require('../lib/upload');
 
@@ -26,7 +26,10 @@ router.patch('/', async (req, res) => {
   if (b.occupation !== undefined) u.occupation = str(b.occupation, 60);
   if (b.company !== undefined) u.company = str(b.company, 60);
   if (b.bio !== undefined) u.bio = str(b.bio, 500);
-  if (b.city !== undefined && O.CITIES.includes(b.city)) u.city = b.city;
+  if (b.city !== undefined) {
+    if (!O.LAUNCH_CITIES.includes(b.city)) return res.status(400).json({ error: `Kinnesto is live in ${O.LAUNCH_CITIES.join(', ')} for now. More cities soon!` });
+    u.city = b.city;
+  }
   if (Array.isArray(b.localities)) u.localities = b.localities.map((l) => str(l, 40)).filter(Boolean).slice(0, 5);
   if (b.intent !== undefined && O.INTENTS[b.intent]) u.intent = b.intent;
   if (b.budgetMin !== undefined) u.budgetMin = Math.max(0, Number(b.budgetMin) || 0);
@@ -89,16 +92,7 @@ router.post('/photos/:index/main', async (req, res) => {
 });
 
 router.delete('/', async (req, res) => {
-  const id = req.user._id;
-  const matches = await Match.find({ users: id }).select('_id');
-  await Promise.all([
-    Message.deleteMany({ match: { $in: matches.map((m) => m._id) } }),
-    Match.deleteMany({ users: id }),
-    Swipe.deleteMany({ $or: [{ from: id }, { to: id }] }),
-    Interest.deleteMany({ $or: [{ user: id }, { owner: id }] }),
-    Listing.deleteMany({ owner: id }),
-  ]);
-  await User.deleteOne({ _id: id });
+  await deleteUserData(req.user._id);
   res.json({ ok: true });
 });
 

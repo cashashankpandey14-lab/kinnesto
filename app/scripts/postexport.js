@@ -7,8 +7,8 @@ const seo = require('./seo');
 const root = path.join(__dirname, '..');
 const dist = path.join(root, 'web-build');
 const SITE = seo.SITE;
-const TITLE = 'Kinnesto: PG, Flats, Hostels & Flatmates in India – No Broker';
-const DESC = 'Swipe on flats, PGs, hostels, co-living and BnB stays, and match with flatmates who share your vibe. Free, no brokerage, in 15 Indian cities.';
+const TITLE = 'Kinnesto: PG, Flats & Flatmates in Mumbai – No Broker';
+const DESC = 'Find PGs, flats, hostels, co-living and stays across Mumbai, and match with flatmates on budget, timing and lifestyle. Free, no brokerage.';
 
 fs.copyFileSync(path.join(root, 'vercel.json'), path.join(dist, 'vercel.json'));
 fs.copyFileSync(path.join(root, '.vercelignore'), path.join(dist, '.vercelignore'));
@@ -21,7 +21,7 @@ const jsonLd = [
 ];
 
 const tags = [
-  `<meta name="theme-color" content="#2A1660">`,
+  `<meta name="theme-color" content="#121119">`,
   `<link rel="apple-touch-icon" href="/icon.png">`,
   `<link rel="manifest" href="/site.webmanifest">`,
   `<link rel="canonical" href="${SITE}/">`,
@@ -38,11 +38,11 @@ const tags = [
 ].join('\n');
 
 // Shown until the app's JavaScript takes over (a split second for people), and readable by any crawler.
-const fallback = `<div id="root"><div style="font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:40px 20px;color:#17112B;background:#FBF7EF">
-<h1>Find your place. Find your people.</h1>
-<p>Kinnesto is the free, no-broker way to find PGs, flats for rent, hostels, co-living and BnB stays in India, and to match with flatmates by budget, move-in date and lifestyle.</p>
+const fallback = `<div id="root"><div style="font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:40px 20px;color:#121119;background:#F6F5F2">
+<h1>Find your place. And the people to share it with.</h1>
+<p>Kinnesto is the free, no-broker way to find PGs, flats for rent, hostels, co-living and stays in Mumbai, and to match with flatmates by budget, move-in date and lifestyle.</p>
 <p><a href="/auth?mode=register">Create your free profile</a> · <a href="/about">About</a> · <a href="/safety">Safety</a></p>
-<h2>Cities</h2><p>${seo.cities.map((c) => `<a href="/in/${c.slug}">PG, flats &amp; flatmates in ${c.name}</a>`).join(' · ')}</p>
+<p>${seo.cities.filter((c) => c.live).map((c) => `<a href="/in/${c.slug}">PG, flats &amp; flatmates in ${c.name}</a>`).join(' · ')}</p>
 </div></div>`;
 
 const file = path.join(dist, 'index.html');

@@ -50,7 +50,7 @@ export default function EditListing() {
           type: 'flat',
           title: '',
           description: '',
-          city: user?.city ?? 'Bengaluru',
+          city: user?.city ?? options?.LAUNCH_CITIES[0] ?? 'Mumbai',
           locality: user?.localities[0] ?? '',
           price: '',
           deposit: '',
@@ -132,7 +132,7 @@ export default function EditListing() {
       <SectionTitle>What are you listing?</SectionTitle>
       <ChipGroup
         tone="place"
-        options={Object.fromEntries(Object.entries(options.LISTING_TYPES).map(([k, t]) => [k, `${t.emoji} ${t.label}`])) as Record<ListingType, string>}
+        options={Object.fromEntries(Object.entries(options.LISTING_TYPES).map(([k, t]) => [k, `${t.label}`])) as Record<ListingType, string>}
         value={d.type}
         onChange={(type) => set({ type, ...(id ? {} : TYPE_DEFAULTS[type]) })}
       />
@@ -144,8 +144,9 @@ export default function EditListing() {
       <SectionTitle>Basics</SectionTitle>
       <Field label="Title" value={d.title} onChangeText={(title) => set({ title })} maxLength={80} placeholder={isBnb ? 'Sea-view studio for workations' : 'Sunny room in a 3BHK near the metro'} />
       <Text style={{ fontSize: 13, fontWeight: '700', color: colors.muted, marginBottom: 8 }}>City</Text>
-      <ChipGroup tone="place" options={options.CITIES} value={d.city} onChange={(city) => set({ city })} />
-      <Field label="Area / locality" value={d.locality} onChangeText={(locality) => set({ locality })} maxLength={60} placeholder="Koramangala" hint="Only the area is shown. Share the exact address in chat." />
+      <ChipGroup tone="place" options={options.LAUNCH_CITIES} value={d.city} onChange={(city) => set({ city })} />
+      <Text style={{ color: colors.muted, fontSize: 12, marginBottom: 10 }}>More cities coming soon.</Text>
+      <Field label="Area / locality" value={d.locality} onChangeText={(locality) => set({ locality })} maxLength={60} placeholder="Andheri West" hint="Only the area is shown. Share the exact address in chat." />
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <Field label={`Price (₹ per ${unit})`} value={d.price} onChangeText={(v) => set({ price: v.replace(/\D/g, '') })} keyboardType="number-pad" placeholder={isBnb ? '2500' : '15000'} />
         {!isBnb && <Field label="Deposit (₹)" value={d.deposit} onChangeText={(v) => set({ deposit: v.replace(/\D/g, '') })} keyboardType="number-pad" placeholder="30000" />}

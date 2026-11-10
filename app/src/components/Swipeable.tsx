@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef, type ReactNode } from 'react';
 import { Animated, PanResponder, StyleSheet, useWindowDimensions } from 'react-native';
 import { Text } from '@/components/Text';
-import { colors, hard, radius } from '@/lib/theme';
+import { colors, radius, shadow } from '@/lib/theme';
 
 export type SwipeDir = 'like' | 'pass';
 export interface SwipeableHandle {
@@ -55,10 +55,10 @@ export const Swipeable = forwardRef<SwipeableHandle, { children: ReactNode; onSw
       <Animated.View {...responder.panHandlers} style={[styles.card, { transform: [...pos.getTranslateTransform(), { rotate }] }]}>
         {children}
         <Animated.View pointerEvents="none" style={[styles.stamp, styles.stampLike, { opacity: likeOpacity }]}>
-          <Text style={[styles.stampText, { color: colors.ink }]}>{likeLabel}</Text>
+          <Text style={[styles.stampText, { color: colors.like }]}>{likeLabel}</Text>
         </Animated.View>
         <Animated.View pointerEvents="none" style={[styles.stamp, styles.stampNope, { opacity: nopeOpacity }]}>
-          <Text style={[styles.stampText, { color: colors.ink }]}>{passLabel}</Text>
+          <Text style={[styles.stampText, { color: colors.nope }]}>{passLabel}</Text>
         </Animated.View>
       </Animated.View>
     );
@@ -70,12 +70,11 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
     borderRadius: radius.lg,
     overflow: 'hidden',
-    backgroundColor: colors.plum,
-    ...hard(6),
-    borderWidth: 3,
+    backgroundColor: colors.ink2,
+    ...shadow.lg,
   },
-  stamp: { position: 'absolute', top: 54, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 4, zIndex: 5, ...hard(4), borderWidth: 3 },
-  stampLike: { left: 22, backgroundColor: colors.lime, transform: [{ rotate: '-12deg' }] },
-  stampNope: { right: 22, backgroundColor: colors.pink, transform: [{ rotate: '12deg' }] },
-  stampText: { fontSize: 34, fontWeight: '900', letterSpacing: 1 },
+  stamp: { position: 'absolute', top: 56, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 4, zIndex: 5, borderWidth: 3, backgroundColor: 'rgba(255,255,255,0.92)' },
+  stampLike: { left: 24, borderColor: colors.like, transform: [{ rotate: '-10deg' }] },
+  stampNope: { right: 24, borderColor: colors.nope, transform: [{ rotate: '10deg' }] },
+  stampText: { fontSize: 30, fontWeight: '900', letterSpacing: 2 },
 });

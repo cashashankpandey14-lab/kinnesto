@@ -16,7 +16,7 @@ function buildFilter(q, user) {
   const filter = { active: true };
   const types = String(q.type || '').split(',').filter((t) => O.LISTING_TYPES[t]);
   if (types.length) filter.type = { $in: types };
-  filter.city = O.CITIES.includes(q.city) ? q.city : user.city || 'Bengaluru';
+  filter.city = O.CITIES.includes(q.city) ? q.city : user.city || O.LAUNCH_CITIES[0];
   if (q.maxPrice) filter.price = { ...filter.price, $lte: Number(q.maxPrice) };
   if (q.minPrice) filter.price = { ...filter.price, $gte: Number(q.minPrice) };
   if (O.ROOM_TYPES[q.roomType]) filter.roomType = q.roomType;
@@ -121,6 +121,7 @@ function readListing(b, l = {}) {
 
 router.post('/', async (req, res) => {
   const data = readListing(req.body);
+  if (!O.LAUNCH_CITIES.includes(data.city)) return res.status(400).json({ error: `You can list places in ${O.LAUNCH_CITIES.join(', ')} for now. More cities soon!` });
   if (!data.photos?.length) return res.status(400).json({ error: 'Add at least one photo' });
   try {
     const l = await Listing.create({ ...data, owner: req.user._id });

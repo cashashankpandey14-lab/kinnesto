@@ -91,7 +91,7 @@ export default function PersonScreen() {
           <Card>
             {intent && (
               <Text style={{ fontSize: 16, fontWeight: '800', color: colors.ink, marginBottom: 8 }}>
-                {intent.emoji} {intent.label}
+                {intent.label}
               </Text>
             )}
             {[
@@ -115,7 +115,7 @@ export default function PersonScreen() {
                 {Object.entries(person.lifestyle).map(([k, v]) => {
                   const same = user?.lifestyle[k] === v;
                   return (
-                    <View key={k} style={[styles.life, same && { borderColor: colors.ink, backgroundColor: colors.lilac }]}>
+                    <View key={k} style={[styles.life, same && { borderColor: colors.marigold, backgroundColor: colors.marigoldSoft }]}>
                       <Ionicons name={(options.LIFESTYLE[k]?.icon ?? 'ellipse') as any} size={16} color={same ? colors.ink : colors.muted} />
                       <View>
                         <Text style={styles.lifeLabel}>{options.LIFESTYLE[k]?.label}</Text>

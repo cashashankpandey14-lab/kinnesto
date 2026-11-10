@@ -19,7 +19,7 @@ export default function Roomies() {
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const [intent, setIntent] = useState<Intent | null>(null);
-  const [city, setCity] = useState(user?.city ?? 'Bengaluru');
+  const [city, setCity] = useState(user?.city ?? options?.LAUNCH_CITIES[0] ?? 'Mumbai');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -62,7 +62,7 @@ export default function Roomies() {
           <Chip label="Everyone" selected={!intent} onPress={() => setIntent(null)} />
           {options &&
             (Object.entries(options.INTENTS) as [Intent, { label: string; emoji: string }][]).map(([k, v]) => (
-              <Chip key={k} label={`${v.emoji} ${v.label}`} selected={intent === k} onPress={() => setIntent(intent === k ? null : k)} />
+              <Chip key={k} label={`${v.label}`} selected={intent === k} onPress={() => setIntent(intent === k ? null : k)} />
             ))}
         </ScrollView>
         <Deck

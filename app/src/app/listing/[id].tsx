@@ -106,7 +106,7 @@ export default function ListingScreen() {
         <View style={styles.col}>
           <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <Text style={styles.type}>
-              {t.emoji} {t.label}
+              {t.label}
             </Text>
             {listing.fit != null && !mine && <FitPill score={listing.fit} />}
             {!listing.active && <Text style={{ color: colors.nope, fontWeight: '800' }}>Paused</Text>}
@@ -190,7 +190,7 @@ export default function ListingScreen() {
                         <Text style={{ color: colors.muted }}>
                           {dateLabel(checkIn)} → {dateLabel(checkOut)} · {nights(checkIn, checkOut)} nights
                         </Text>
-                        <Text style={{ fontWeight: '900', fontSize: 18, color: colors.ink }}>{rupees(listing.price * stay)}</Text>
+                        <Text style={{ fontWeight: '800', fontSize: 18, color: colors.ink }}>{rupees(listing.price * stay)}</Text>
                       </View>
                     )}
                   </>
@@ -219,7 +219,7 @@ export default function ListingScreen() {
           ) : (
             <>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontWeight: '900', fontSize: 18, color: colors.ink }}>{priceLabel(listing, options)}</Text>
+                <Text style={{ fontWeight: '800', fontSize: 18, color: colors.ink }}>{priceLabel(listing, options)}</Text>
                 {!isBnb && listing.deposit ? <Text style={{ color: colors.muted, fontSize: 13 }}>+ {rupees(listing.deposit)} deposit</Text> : null}
               </View>
               <Button title={isBnb ? 'Request to book' : 'I’m interested'} variant="place" icon={isBnb ? 'calendar' : 'heart'} onPress={send} loading={busy} style={{ flex: 1.3 }} />
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   type: { fontWeight: '800', color: colors.place, marginTop: 18 },
   title: { fontSize: 26, fontWeight: '900', color: colors.ink, marginTop: 6, letterSpacing: -0.5 },
   loc: { color: colors.muted, marginTop: 6, fontSize: 15 },
-  price: { fontSize: 22, fontWeight: '900', color: colors.ink, marginTop: 10 },
+  price: { fontSize: 22, fontWeight: '800', color: colors.ink, marginTop: 10 },
   reasons: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   reason: { backgroundColor: colors.placeSoft, color: colors.place, fontWeight: '800', paddingHorizontal: 10, paddingVertical: 5, borderRadius: radius.pill, overflow: 'hidden', fontSize: 13 },
   facts: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 16 },

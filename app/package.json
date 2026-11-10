@@ -12,8 +12,8 @@
     "export:web": "expo export -p web --output-dir web-build && node scripts/postexport.js"
   },
   "dependencies": {
-    "@expo-google-fonts/bricolage-grotesque": "^0.4.1",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
+    "@expo-google-fonts/sora": "^0.4.2",
     "@expo/metro-runtime": "~57.0.16",
     "@expo/vector-icons": "^15.0.2",
     "expo": "~57.0.26",

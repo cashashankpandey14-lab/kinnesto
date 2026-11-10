@@ -99,6 +99,10 @@ const LISTINGS = [
     'Moving out, looking for someone to take over the lease in Hiranandani. Society has a pool and gym.'],
 ];
 
+// We launch in Mumbai, so demo members and listings all live there.
+const MUMBAI = { Koramangala: 'Bandra West', 'HSR Layout': 'Andheri West', Indiranagar: 'Powai', Whitefield: 'Goregaon', Marathahalli: 'Malad', 'BTM Layout': 'Andheri East', 'Electronic City': 'Thane', Bellandur: 'Chembur', Jayanagar: 'Lower Parel', Domlur: 'Juhu', Bandra: 'Bandra West', 'Andheri West': 'Andheri West', Powai: 'Powai', 'Andheri East': 'Andheri East', Baner: 'Vashi', Aundh: 'Kharghar', Kharadi: 'Thane', 'Viman Nagar': 'Kandivali', Assagao: 'Versova', Anjuna: 'Versova' };
+const toMumbai = (area) => MUMBAI[area] || area;
+
 async function seed() {
   await mongoose.connect(config.mongoUri, { dbName: config.dbName });
   const demo = await User.find({ isDemo: true }).distinct('_id');
@@ -120,8 +124,8 @@ async function seed() {
       name,
       gender,
       birthYear: Y - age,
-      city,
-      localities,
+      city: 'Mumbai',
+      localities: localities.map(toMumbai),
       intent,
       budgetMin,
       budgetMax,
@@ -144,8 +148,8 @@ async function seed() {
       owner: users[o]._id,
       type,
       title,
-      city: users[o].city,
-      locality,
+      city: 'Mumbai',
+      locality: toMumbai(locality),
       price,
       deposit,
       roomType,

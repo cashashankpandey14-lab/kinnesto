@@ -14,6 +14,7 @@ export interface Options {
   LIFESTYLE: Record<string, { label: string; icon: string; options: string[]; ordered?: boolean }>;
   INTERESTS: string[];
   CITIES: string[];
+  LAUNCH_CITIES: string[];
   REPORT_REASONS: string[];
 }
 
@@ -41,6 +42,7 @@ export interface Me extends ProfileBase {
   birthYear: number | null;
   flatmateGender: GenderPref;
   onboarded: boolean;
+  isAdmin?: boolean;
 }
 
 export interface Person extends ProfileBase {

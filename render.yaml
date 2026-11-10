@@ -31,3 +31,5 @@ services:
         sync: false
       - key: FACEBOOK_APP_SECRET
         sync: false
+      - key: ADMIN_EMAILS
+        value: shashank@nevejewels.com

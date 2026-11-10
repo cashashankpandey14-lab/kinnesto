@@ -8,57 +8,42 @@ from PIL import Image, ImageDraw, ImageFont
 
 APP = Path(__file__).resolve().parent.parent
 FONTS = APP / 'node_modules' / '@expo-google-fonts'
-DISPLAY = str(FONTS / 'bricolage-grotesque' / '800ExtraBold' / 'BricolageGrotesque_800ExtraBold.ttf')
+DISPLAY = str(FONTS / 'sora' / '600SemiBold' / 'Sora_600SemiBold.ttf')
 BODY = str(FONTS / 'plus-jakarta-sans' / '600SemiBold' / 'PlusJakartaSans_600SemiBold.ttf')
-BOLD = str(FONTS / 'plus-jakarta-sans' / '800ExtraBold' / 'PlusJakartaSans_800ExtraBold.ttf')
+BOLD = str(FONTS / 'plus-jakarta-sans' / '700Bold' / 'PlusJakartaSans_700Bold.ttf')
 
-PAPER, INK, LIME, PINK, LILAC, PLUM = '#FBF7EF', '#17112B', '#CCFF4D', '#FF5FA2', '#BBA6FF', '#2A1660'
+INK, MUTED, MARIGOLD, GOLDTEXT = (18, 17, 25), (160, 156, 175), (244, 165, 28), (244, 165, 28)
 W, H = 1200, 630
 
 
-def marker(d, xy, text, font, fill):
-    """A word on a tilted-looking highlighter block with an ink outline and hard shadow."""
-    x, y = xy
-    l, t, r, b = d.textbbox((x, y), text, font=font)
-    pad = 14
-    box = [l - pad, t - 8, r + pad, b + 12]
-    d.rounded_rectangle([box[0] + 7, box[1] + 7, box[2] + 7, box[3] + 7], radius=14, fill=INK)
-    d.rounded_rectangle(box, radius=14, fill=fill, outline=INK, width=4)
-    d.text((x, y), text, font=font, fill=INK)
-
-
 def main():
-    img = Image.new('RGB', (W, H), PAPER)
+    img = Image.new('RGB', (W, H), INK)
+    # Soft marigold glow behind the icon.
+    glow = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(glow)
+    for r in range(320, 0, -8):
+        a = int(26 * (1 - r / 320) ** 1.6)
+        gd.ellipse([930 - r, 315 - r, 930 + r, 315 + r], fill=(244, 165, 28, a))
+    img.paste(glow, (0, 0), glow)
     d = ImageDraw.Draw(img)
-    h1 = ImageFont.truetype(DISPLAY, 96)
-    small = ImageFont.truetype(BODY, 30)
-    tag = ImageFont.truetype(BOLD, 26)
 
-    # Left: headline
-    d.text((70, 70), 'Find your', font=h1, fill=INK)
-    marker(d, (82, 178), 'place.', h1, LIME)
-    d.text((70, 300), 'Find your', font=h1, fill=INK)
-    marker(d, (82, 408), 'people.', h1, PINK)
-    d.text((72, 548), 'Flats · PGs · Hostels · Co-living · BnBs · Flatmates', font=small, fill='#3D3653')
+    d.rounded_rectangle([72, 74, 330, 116], radius=21, outline=(60, 56, 74), width=2)
+    d.ellipse([90, 89, 102, 101], fill=(30, 158, 106))
+    d.text((114, 95), 'Now live in Mumbai', font=ImageFont.truetype(BOLD, 20), fill=(230, 228, 236), anchor='lm')
 
-    # Right: the app icon on a tilted card stack, plus a sticker
-    icon = Image.open(APP / 'assets' / 'icon.png').convert('RGBA').resize((330, 330), Image.LANCZOS)
-    mask = Image.new('L', (330, 330), 0)
-    ImageDraw.Draw(mask).rounded_rectangle([0, 0, 329, 329], radius=76, fill=255)
-    icon.putalpha(mask)
-    shadow = Image.new('RGBA', (330, 330), INK)
-    shadow.putalpha(mask)
-    for layer, (x, y, angle) in ((shadow, (838, 158, -6)), (icon, (830, 150, -6))):
-        rot = layer.rotate(angle, resample=Image.BICUBIC, expand=True)
-        img.paste(rot, (x - 20, y - 20), rot)
+    h1 = ImageFont.truetype(DISPLAY, 78)
+    d.text((70, 160), 'Find your place.', font=h1, fill=(255, 255, 255))
+    d.text((70, 252), 'And the people', font=h1, fill=GOLDTEXT)
+    d.text((70, 344), 'to share it with.', font=h1, fill=GOLDTEXT)
+    d.text((72, 470), 'Flats, PGs, hostels, co-living and flatmates.', font=ImageFont.truetype(BODY, 28), fill=MUTED)
+    d.text((72, 512), 'Matched on lifestyle. No brokers.', font=ImageFont.truetype(BODY, 28), fill=MUTED)
 
-    d.rounded_rectangle([880, 470, 1150, 534], radius=32, fill=INK)
-    d.rounded_rectangle([872, 462, 1142, 526], radius=32, fill=LIME, outline=INK, width=4)
-    d.text((1007, 494), 'kinnesto.com', font=tag, fill=INK, anchor='mm')
-
-    d.rounded_rectangle([900, 86, 1128, 140], radius=27, fill=INK)
-    d.rounded_rectangle([894, 80, 1122, 134], radius=27, fill=LILAC, outline=INK, width=3)
-    d.text((1008, 107), '92% vibe match', font=ImageFont.truetype(BOLD, 22), fill=INK, anchor='mm')
+    icon = Image.open(APP / 'assets' / 'icon.png').convert('RGBA').resize((300, 300), Image.LANCZOS)
+    mask = Image.new('L', (300, 300), 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, 299, 299], radius=70, fill=255)
+    img.paste(icon, (780, 165), mask)
+    d.rounded_rectangle([780, 165, 1079, 464], radius=70, outline=(60, 56, 74), width=2)
+    d.text((930, 520), 'kinnesto.com', font=ImageFont.truetype(BOLD, 30), fill=(255, 255, 255), anchor='mm')
 
     img.save(APP / 'assets' / 'og.png', optimize=True)
     print('Wrote assets/og.png')

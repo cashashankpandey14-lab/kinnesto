@@ -22,7 +22,7 @@ export default function Places() {
   const { width } = useWindowDimensions();
   const [mode, setMode] = useState<'swipe' | 'browse'>(width >= 900 ? 'browse' : 'swipe');
   const [type, setType] = useState<ListingType | null>(null);
-  const [city, setCity] = useState(user?.city ?? 'Bengaluru');
+  const [city, setCity] = useState(user?.city ?? options?.LAUNCH_CITIES[0] ?? 'Mumbai');
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [sort, setSort] = useState<'fit' | 'price' | 'newest'>('fit');
   const [items, setItems] = useState<Listing[]>([]);
@@ -76,7 +76,7 @@ export default function Places() {
           <Chip label="All" tone="place" selected={!type} onPress={() => setType(null)} />
           {options &&
             (Object.entries(options.LISTING_TYPES) as [ListingType, { label: string; emoji: string }][]).map(([k, v]) => (
-              <Chip key={k} tone="place" label={`${v.emoji} ${v.label}`} selected={type === k} onPress={() => { setType(type === k ? null : k); setMaxPrice(null); }} />
+              <Chip key={k} tone="place" label={`${v.label}`} selected={type === k} onPress={() => { setType(type === k ? null : k); setMaxPrice(null); }} />
             ))}
         </ScrollView>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 6 }} style={{ flexGrow: 0 }}>
@@ -100,7 +100,7 @@ export default function Places() {
             loading={loading}
             onSwipe={swipe}
             likeLabel="WANT"
-            likeColor={colors.place}
+            likeColor={colors.sea}
             onInfo={(l) => router.push(`/listing/${l.id}`)}
             renderCard={(l) => <PlaceCard listing={l} onInfo={() => router.push(`/listing/${l.id}`)} />}
             empty={<Empty icon="home" title="No more places here" body="Change the filters or city, or switch to Browse to see places you’ve already swiped." />}

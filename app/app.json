@@ -17,7 +17,7 @@
     "android": {
       "package": "app.kinnesto",
       "adaptiveIcon": {
-        "backgroundColor": "#2A1660",
+        "backgroundColor": "#121119",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -37,7 +37,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#2A1660",
+          "backgroundColor": "#121119",
           "image": "./assets/splash-icon.png",
           "imageWidth": 200
         }

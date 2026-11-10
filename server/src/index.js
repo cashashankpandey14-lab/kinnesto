@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const { config } = require('./config');
-const { requireAuth, requireOnboarded } = require('./middleware/auth');
+const { requireAuth, requireOnboarded, requireAdmin } = require('./middleware/auth');
 const { initSocket } = require('./socket');
 const { servePhoto } = require('./lib/upload');
 
@@ -32,6 +32,7 @@ app.use('/api/listings', requireAuth, require('./routes/listings'));
 app.use('/api/people', requireAuth, requireOnboarded, require('./routes/people'));
 app.use('/api/requests', requireAuth, require('./routes/requests'));
 app.use('/api/matches', requireAuth, require('./routes/matches'));
+app.use('/api/admin', requireAuth, requireAdmin, require('./routes/admin'));
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 // eslint-disable-next-line no-unused-vars

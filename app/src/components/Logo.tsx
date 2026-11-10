@@ -6,14 +6,14 @@ import { colors } from '@/lib/theme';
 const ICON = require('../../assets/icon.png');
 
 export function LogoMark({ size = 36 }: { size?: number }) {
-  return <Image source={ICON} style={{ width: size, height: size, borderRadius: size * 0.24 }} accessibilityLabel="Kinnesto" />;
+  return <Image source={ICON} style={{ width: size, height: size, borderRadius: size * 0.26 }} accessibilityLabel="Kinnesto" />;
 }
 
 export function Logo({ size = 36, light }: { size?: number; light?: boolean }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
       <LogoMark size={size} />
-      <Text style={{ fontSize: size * 0.72, fontWeight: '900', letterSpacing: -0.8, color: light ? '#fff' : colors.ink }}>kinnesto</Text>
+      <Text style={{ fontSize: size * 0.7, fontWeight: '900', letterSpacing: -0.9, color: light ? '#fff' : colors.ink }}>kinnesto</Text>
     </View>
   );
 }

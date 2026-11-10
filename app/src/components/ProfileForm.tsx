@@ -99,11 +99,12 @@ export function SearchSection({ d, set }: Props) {
     <View>
       <Text style={label}>I’m here because…</Text>
       {(Object.entries(options.INTENTS) as [Intent, (typeof options.INTENTS)[Intent]][]).map(([k, v]) => (
-        <Chip key={k} label={`${v.emoji}  ${v.label}: ${v.blurb}`} selected={d.intent === k} onPress={() => set({ intent: k })} />
+        <Chip key={k} label={`${v.label}: ${v.blurb}`} selected={d.intent === k} onPress={() => set({ intent: k })} />
       ))}
       <SectionTitle>City</SectionTitle>
-      <ChipGroup options={options.CITIES} value={d.city} onChange={(city) => set({ city })} />
-      <Field label="Preferred areas" value={d.localities} onChangeText={(localities) => set({ localities })} placeholder="Koramangala, HSR Layout" hint="Separate with commas. Up to 5." />
+      <ChipGroup options={options.LAUNCH_CITIES} value={d.city} onChange={(city) => set({ city })} />
+      <Text style={{ color: colors.muted, fontSize: 12, marginBottom: 10 }}>Live in {options.LAUNCH_CITIES.join(', ')}. More cities coming soon.</Text>
+      <Field label="Preferred areas" value={d.localities} onChangeText={(localities) => set({ localities })} placeholder="Andheri West, Powai" hint="Separate with commas. Up to 5." />
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <Field label="Budget from (₹/mo)" value={d.budgetMin} onChangeText={(v) => set({ budgetMin: v.replace(/\D/g, '') })} keyboardType="number-pad" placeholder="10000" />
         <Field label="Budget up to (₹/mo)" value={d.budgetMax} onChangeText={(v) => set({ budgetMax: v.replace(/\D/g, '') })} keyboardType="number-pad" placeholder="20000" />

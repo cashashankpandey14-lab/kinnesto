@@ -74,6 +74,10 @@ const CITIES = [
   'Kolkata', 'Ahmedabad', 'Jaipur', 'Chandigarh', 'Indore', 'Kochi', 'Goa',
 ];
 
+// Cities open for profiles and listings right now. The rest show as "coming soon".
+// To open a city, add it here (it must also be in CITIES).
+const LAUNCH_CITIES = ['Mumbai'];
+
 const REPORT_REASONS = ['Fake profile or listing', 'Asked for money upfront', 'Rude or abusive', 'Scam or broker posing as owner', 'Something else'];
 
 module.exports = {
@@ -87,5 +91,6 @@ module.exports = {
   LIFESTYLE,
   INTERESTS,
   CITIES,
+  LAUNCH_CITIES,
   REPORT_REASONS,
 };

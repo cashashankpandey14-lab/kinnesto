@@ -1,239 +1,314 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import type { ReactNode } from 'react';
-import { Image, Linking, Platform, ScrollView, StyleSheet, useWindowDimensions, View, type ViewStyle } from 'react-native';
+import { useState } from 'react';
+import { Image, Linking, Platform, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Logo } from '@/components/Logo';
 import { Text } from '@/components/Text';
 import { Button } from '@/components/ui';
-import { useAuth } from '@/lib/auth';
-import { colors, hard, MAX_WIDTH, radius } from '@/lib/theme';
+import { colors, MAX_WIDTH, radius, shadow } from '@/lib/theme';
 
-const img = (id: string, w = 900) => `https://images.unsplash.com/photo-${id}?w=${w}&q=70&auto=format&fit=crop`;
-const ROOM = img('1522708323590-d24dbb6b0267');
-const PERSON = img('1534528741775-53994a69daeb', 700);
+const img = (id: string, w = 1200) => `https://images.unsplash.com/photo-${id}?w=${w}&q=72&auto=format&fit=crop`;
+const HERO = img('1502672260266-1c1ef2d93688', 1400);
+const OWNER = img('1556020685-ae41abfc9365');
+const FACE = img('1580489944761-15a19d654956', 300);
 
-const CITIES = ['Bengaluru', 'Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Gurugram', 'Chennai', 'Goa', 'Noida', 'Kolkata'];
-const TYPE_COLORS = [colors.lime, colors.lilac, colors.pink, colors.tangerine, '#FFFFFF'];
-
-const STEPS = [
-  { n: '01', title: 'Drop your vibe', body: 'Budget, move-in date, areas, and the real stuff: food, sleep, cleanliness, guests, pets.' },
-  { n: '02', title: 'Swipe people & places', body: 'Right on a flatmate who gets you. Right on a room you love. Every card shows a match score.' },
-  { n: '03', title: 'Match, chat, move in', body: 'Mutual likes and accepted requests open a chat. No brokers. No spam calls.' },
+const TYPES = [
+  { key: 'Flats & flatshares', body: 'Private rooms in shared flats, or a whole apartment.', photo: img('1522708323590-d24dbb6b0267', 700) },
+  { key: 'PGs', body: 'Paying-guest rooms, often with meals and housekeeping.', photo: img('1540518614846-7eded433c457', 700) },
+  { key: 'Hostels', body: 'Budget beds for students and interns, by the month.', photo: img('1555854877-bab0e564b8d5', 700) },
+  { key: 'Co-living', body: 'Managed shared homes with bills and cleaning included.', photo: img('1560448204-e02f11c3d0e2', 700) },
+  { key: 'BnB stays', body: 'Short stays while you house-hunt or travel.', photo: img('1631049307264-da0ec9d70304', 700) },
 ];
 
-const FOR_WHO = [
-  { icon: 'school', title: 'Students & interns', body: 'Hostels, PGs and budget rooms near campus or your first office.' },
-  { icon: 'briefcase', title: 'First-jobbers & pros', body: 'Flatshares with people on your wavelength, not random strangers.' },
-  { icon: 'people', title: 'Couples & families', body: 'Entire flats and short stays while you settle into a new city.' },
-  { icon: 'key', title: 'Owners & hosts', body: 'List a room, PG or BnB free, and pick tenants by vibe, not just paperwork.' },
+const AREAS = ['Andheri', 'Bandra', 'Powai', 'Lower Parel', 'Goregaon', 'Malad', 'Chembur', 'Kandivali', 'Thane', 'Vashi'];
+
+const LOOKING = ['A room', 'A PG', 'A flatmate', 'A short stay'];
+
+const FEATURES = [
+  { icon: 'pulse', title: 'Compatibility, scored', body: 'Every flatmate and every listing shows a match score built from budget, move-in date and how you actually live.' },
+  { icon: 'chatbubbles-outline', title: 'Talk directly', body: 'Mutual likes and accepted requests open a private chat with the owner or flatmate. No middlemen.' },
+  { icon: 'shield-checkmark-outline', title: 'Built for safety', body: 'Only the area is public, never the exact address. Block and report in two taps.' },
 ] as const;
 
-const CITY_LINKS = [['bengaluru', 'Bengaluru'], ['mumbai', 'Mumbai'], ['delhi', 'Delhi'], ['gurugram', 'Gurugram'], ['noida', 'Noida'], ['pune', 'Pune'], ['hyderabad', 'Hyderabad'], ['chennai', 'Chennai'], ['kolkata', 'Kolkata'], ['goa', 'Goa']];
+const BREAKDOWN: [string, number][] = [
+  ['Sleep schedule', 100],
+  ['Food habits', 100],
+  ['Budget overlap', 90],
+  ['Cleanliness', 80],
+  ['Guests', 60],
+];
+
+const FAQ = [
+  ['Is Kinnesto free?', 'Yes. Creating a profile, swiping, matching, chatting and listing a place are all free. There is no brokerage.'],
+  ['How is the match score calculated?', 'From your budget and move-in date, what you are looking for, and lifestyle answers like sleep schedule, food, cleanliness, guests and pets. The reasons are shown on every card.'],
+  ['Which cities are live?', 'Mumbai, from Andheri and Bandra to Powai, Thane and Navi Mumbai. More cities are coming soon.'],
+];
 
 // react-native-web renders a Text with href as a real <a>, which crawlers follow.
 const webLink = (href: string) => (Platform.OS === 'web' ? ({ href, role: 'link' } as object) : { onPress: () => Linking.openURL(`https://kinnesto.com${href}`) });
 
-const VIBES = ['🌙 Night owl', '🥦 Veg', '✨ Neat freak', '🎮 Gamer', '🐶 Pet parent', '☕ WFH', '🎉 Social', '🧘 Calm'];
-
-// Text with a hand-drawn highlighter block behind it.
-function Marker({ children, color, size }: { children: string; color: string; size: number }) {
-  return (
-    <View style={[styles.marker, { backgroundColor: color }]}>
-      <Text style={[styles.h1, { fontSize: size, lineHeight: size * 1.05 }]}>{children}</Text>
-    </View>
-  );
-}
-
-function Sticker({ children, color, style }: { children: ReactNode; color: string; style?: ViewStyle }) {
-  return <View style={[styles.sticker, { backgroundColor: color }, style]}>{children}</View>;
-}
-
 export default function Welcome() {
-  const { options } = useAuth();
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const wide = width >= 900;
-  const h1 = wide ? 84 : width >= 420 ? 56 : 48;
+  const wide = width >= 960;
+  const mid = width >= 640;
+  const [looking, setLooking] = useState(LOOKING[0]);
+  const [open, setOpen] = useState<number | null>(0);
   const go = () => router.push('/auth?mode=register');
+  const h1 = wide ? 64 : mid ? 50 : 40;
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.paper }} contentContainerStyle={{ paddingTop: insets.top, overflow: 'hidden' }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.paper }} contentContainerStyle={{ paddingTop: insets.top }}>
       {/* Nav */}
       <View style={[styles.col, styles.nav]}>
-        <Logo size={34} />
-        <View style={{ flexDirection: 'row', gap: 10 }}>
-          <Button title="Sign in" variant="secondary" small onPress={() => router.push('/auth?mode=login')} style={{ paddingHorizontal: 18 }} />
-          {wide && <Button title="Get started" small onPress={go} style={{ paddingHorizontal: 18 }} />}
+        <Logo size={30} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: wide ? 28 : 8 }}>
+          {wide && (
+            <>
+              <Text {...webLink('/in/mumbai')} style={styles.navLink}>Mumbai</Text>
+              <Text {...webLink('/about')} style={styles.navLink}>About</Text>
+              <Text {...webLink('/safety')} style={styles.navLink}>Safety</Text>
+            </>
+          )}
+          <Button title="Sign in" variant="ghost" small onPress={() => router.push('/auth?mode=login')} />
+          <Button title="Get started" small onPress={go} />
         </View>
       </View>
 
       {/* Hero */}
-      <View style={[styles.col, styles.hero, wide && { flexDirection: 'row', alignItems: 'center', gap: 40 }]}>
-        <View style={{ flex: wide ? 1.15 : undefined }}>
-          <Sticker color={colors.lilac} style={{ transform: [{ rotate: '-2deg' }], marginBottom: 22 }}>
-            <Text style={styles.stickerText}>🏠 Flats · PGs · Hostels · Co-living · BnBs</Text>
-          </Sticker>
-          <Text style={[styles.h1, { fontSize: h1, lineHeight: h1 * 1.05 }]}>Find your</Text>
-          <View style={{ flexDirection: 'row' }}>
-            <Marker color={colors.lime} size={h1}>
-              place.
-            </Marker>
+      <View style={[styles.col, styles.hero, wide && { flexDirection: 'row', alignItems: 'center', gap: 56 }]}>
+        <View style={{ flex: wide ? 1 : undefined, maxWidth: 580 }}>
+          <View style={styles.eyebrow}>
+            <View style={styles.liveDot} />
+            <Text style={styles.eyebrowText}>Now live in Mumbai</Text>
           </View>
-          <Text style={[styles.h1, { fontSize: h1, lineHeight: h1 * 1.05, marginTop: 6 }]}>Find your</Text>
-          <View style={{ flexDirection: 'row' }}>
-            <Marker color={colors.pink} size={h1}>
-              people.
-            </Marker>
-          </View>
-          <Text style={styles.lead}>
-            Swipe on rooms <Text style={{ fontWeight: '800' }}>and</Text> roommates. Kinnesto matches you by budget, timing and how you actually live, so your next flat feels like home from day one.
+          <Text style={[styles.h1, { fontSize: h1, lineHeight: h1 * 1.08 }]}>
+            Find your place.{'\n'}
+            <Text style={{ color: colors.brand }}>And the people to share it with.</Text>
           </Text>
-          <View style={{ flexDirection: wide ? 'row' : 'column', gap: 14, marginTop: 26 }}>
-            <Button title="Start swiping, it’s free" icon="flash" onPress={go} style={wide ? { minWidth: 250 } : undefined} />
-            <Button title="List your place" variant="place" icon="key" onPress={go} style={wide ? { minWidth: 200 } : undefined} />
+          <Text style={styles.lead}>Flats, PGs, hostels, co-living and stays across Mumbai, plus flatmates matched on budget, timing and lifestyle. Free, with no brokers.</Text>
+
+          {/* Search-style starter */}
+          <View style={styles.search}>
+            <View style={styles.searchCity}>
+              <Ionicons name="location-outline" size={18} color={colors.muted} />
+              <View>
+                <Text style={styles.searchLabel}>City</Text>
+                <Text style={styles.searchValue}>Mumbai</Text>
+              </View>
+            </View>
+            <View style={styles.searchDivider} />
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={[styles.searchLabel, { marginLeft: 4 }]}>Looking for</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                {LOOKING.map((l) => (
+                  <Pressable key={l} onPress={() => setLooking(l)} style={[styles.lookChip, looking === l && styles.lookChipOn]} accessibilityState={{ selected: looking === l }}>
+                    <Text style={[styles.lookText, looking === l && { color: '#fff' }]}>{l}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+            <Button title="Start" icon="arrow-forward" onPress={go} style={mid ? { alignSelf: 'center' } : { marginTop: 4 }} />
           </View>
-          <View style={styles.proof}>
-            {['No brokers', 'No spam calls', 'Free to use'].map((t) => (
-              <View key={t} style={styles.proofItem}>
-                <Ionicons name="checkmark-circle" size={18} color={colors.violet} />
-                <Text style={styles.proofText}>{t}</Text>
+          <View style={styles.trust}>
+            {['Free to use', 'No brokerage', 'Direct chat with owners'].map((t) => (
+              <View key={t} style={styles.trustItem}>
+                <Ionicons name="checkmark" size={16} color={colors.sea} />
+                <Text style={styles.trustText}>{t}</Text>
               </View>
             ))}
           </View>
         </View>
 
-        {/* Card stack */}
-        <View style={[styles.stage, wide ? { width: 420, height: 520 } : { height: 470, marginTop: 44 }]}>
-          <View style={[styles.stackCard, styles.backCard]}>
-            <Image source={{ uri: ROOM }} style={StyleSheet.absoluteFill} />
-            <View style={styles.backInfo}>
-              <Text style={styles.backPrice}>₹18,500/mo</Text>
-              <Text style={styles.backTitle}>Sunny room · Koramangala</Text>
-            </View>
-          </View>
-          <View style={[styles.stackCard, styles.frontCard]}>
-            <Image source={{ uri: PERSON }} style={StyleSheet.absoluteFill} />
-            <View style={styles.frontInfo}>
-              <Text style={styles.frontName}>
-                Ananya <Text style={{ fontWeight: '400', color: '#fff', fontSize: 26 }}>26</Text>
-              </Text>
-              <Text style={styles.frontMeta}>Product designer · has a room</Text>
-              <View style={{ flexDirection: 'row', gap: 6, marginTop: 10, flexWrap: 'wrap' }}>
-                <View style={[styles.miniTag, { backgroundColor: colors.lilac }]}>
-                  <Text style={styles.miniTagText}>✓ Both night owls</Text>
-                </View>
-                <View style={[styles.miniTag, { backgroundColor: colors.lime }]}>
-                  <Text style={styles.miniTagText}>✓ Similar budget</Text>
-                </View>
+        {/* Visual */}
+        <View style={[styles.visual, wide ? { flex: 1, height: 560 } : { height: mid ? 520 : 440, marginTop: 40 }]}>
+          <Image source={{ uri: HERO }} style={styles.heroImg} accessibilityLabel="Bright living room in a shared flat" />
+          <View style={[styles.floatCard, { left: wide ? -36 : 12, bottom: 28 }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <Image source={{ uri: FACE }} style={styles.face} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.fcName}>Priya, 27</Text>
+                <Text style={styles.fcMeta}>Analyst · has a room in Bandra</Text>
+              </View>
+              <View style={styles.score}>
+                <Text style={styles.scoreNum}>91%</Text>
               </View>
             </View>
-          </View>
-          <Sticker color={colors.pink} style={{ position: 'absolute', top: 6, right: wide ? -14 : 4, transform: [{ rotate: '8deg' }] }}>
-            <Text style={styles.stickerText}>🔥 92% vibe</Text>
-          </Sticker>
-          <Sticker color={colors.lime} style={{ position: 'absolute', bottom: -6, left: wide ? -26 : 0, transform: [{ rotate: '-10deg' }], paddingVertical: 8 }}>
-            <Text style={[styles.stickerText, { fontSize: 22, fontWeight: '900' }]}>LIKE ♥</Text>
-          </Sticker>
-        </View>
-      </View>
-
-      {/* City strip: tilted and wider than the screen, so clip it to avoid sideways scrolling */}
-      <View style={styles.stripClip}>
-        <View style={styles.strip}>
-          <Text style={styles.stripText} numberOfLines={1}>
-            {[...CITIES, ...CITIES].join('  ✦  ')}
-          </Text>
-        </View>
-      </View>
-
-      <View style={styles.col}>
-        {/* Types */}
-        <Text style={styles.h2}>Every kind of home</Text>
-        <View style={styles.grid}>
-          {options &&
-            Object.entries(options.LISTING_TYPES).map(([k, t], i) => (
-              <View key={k} style={[styles.typeCard, { backgroundColor: TYPE_COLORS[i % TYPE_COLORS.length], flexBasis: wide ? '18%' : '46%', transform: [{ rotate: `${i % 2 ? 1.5 : -1.5}deg` }] }]}>
-                <Text style={{ fontSize: 34 }}>{t.emoji}</Text>
-                <Text style={styles.typeTitle}>{t.label}</Text>
-                <Text style={styles.typeBody}>{t.blurb}</Text>
+            <View style={styles.fcDivider} />
+            {['Both early risers', 'Similar budget', 'Moving in December'].map((r) => (
+              <View key={r} style={styles.fcRow}>
+                <Ionicons name="checkmark-circle" size={16} color={colors.sea} />
+                <Text style={styles.fcReason}>{r}</Text>
               </View>
             ))}
+          </View>
+          <View style={[styles.floatChip, { right: wide ? -20 : 12, top: 28 }]}>
+            <Ionicons name="home" size={14} color={colors.marigold} />
+            <Text style={styles.floatChipText}>Room in Bandra West · ₹32,000/mo</Text>
+          </View>
         </View>
+      </View>
 
-        {/* Steps */}
-        <Text style={styles.h2}>How it works</Text>
-        <View style={{ flexDirection: wide ? 'row' : 'column', gap: 18 }}>
-          {STEPS.map((s) => (
-            <View key={s.n} style={[styles.step, wide && { flex: 1 }]}>
-              <Text style={styles.stepNum}>{s.n}</Text>
-              <Text style={styles.stepTitle}>{s.title}</Text>
-              <Text style={styles.stepBody}>{s.body}</Text>
+      {/* Features */}
+      <View style={[styles.col, styles.section]}>
+        <Text style={styles.kicker}>Why Kinnesto</Text>
+        <Text style={[styles.h2, wide && { maxWidth: 720 }]}>Most rental sites stop at the room. We match the people too.</Text>
+        <View style={[styles.grid3, { marginTop: 36 }]}>
+          {FEATURES.map((f) => (
+            <View key={f.title} style={[styles.feature, { flexBasis: wide ? '30%' : '100%' }]}>
+              <View style={styles.featureIcon}>
+                <Ionicons name={f.icon} size={22} color={colors.brand} />
+              </View>
+              <Text style={styles.h3}>{f.title}</Text>
+              <Text style={styles.body}>{f.body}</Text>
             </View>
           ))}
         </View>
       </View>
 
-      {/* Vibe block */}
-      <View style={[styles.col, { marginTop: 56 }]}>
-        <View style={[styles.vibeBlock, wide && { flexDirection: 'row', alignItems: 'center', gap: 40 }]}>
+      {/* Compatibility band */}
+      <View style={styles.dark}>
+        <View style={[styles.col, { paddingVertical: wide ? 88 : 64 }, wide && { flexDirection: 'row', alignItems: 'center', gap: 64 }]}>
           <View style={{ flex: wide ? 1 : undefined }}>
-            <Text style={[styles.h2, { color: '#fff', marginTop: 0 }]}>Your vibe, decoded.</Text>
-            <Text style={[styles.lead, { color: '#D9D2F0', marginTop: 0 }]}>
-              Night owl or 6am runner? Biryani every Sunday or strictly veg? We turn the little things into a match score, so the awkward flatmate talks happen before you move in, not after.
+            <Text style={[styles.kicker, { color: colors.marigold }]}>Vibe match</Text>
+            <Text style={[styles.h2, { color: '#fff' }]}>Know how you’ll live together before you move in.</Text>
+            <Text style={[styles.body, { color: '#BDB8CA', fontSize: 17, lineHeight: 27, marginTop: 16 }]}>
+              Night owl or early riser? Weekend guests or quiet evenings? Kinnesto turns everyday habits into a clear score, so the important conversations happen at the start, not three months into a lease.
             </Text>
           </View>
-          <View style={[styles.vibeChips, wide && { flex: 1 }]}>
-            {VIBES.map((v, i) => (
-              <View key={v} style={[styles.vibeChip, { backgroundColor: [colors.lime, colors.lilac, colors.pink, '#fff'][i % 4], transform: [{ rotate: `${(i % 3) - 1}deg` }] }]}>
-                <Text style={styles.vibeChipText}>{v}</Text>
+          <View style={[styles.breakdown, { flex: wide ? 0.9 : undefined, marginTop: wide ? 0 : 36 }]}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
+              <View>
+                <Text style={styles.bdLabel}>Example match</Text>
+                <Text style={styles.bdTitle}>You and Priya</Text>
+              </View>
+              <Text style={styles.bdTotal}>91%</Text>
+            </View>
+            {BREAKDOWN.map(([k, v]) => (
+              <View key={k} style={{ marginBottom: 14 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <Text style={styles.bdRow}>{k}</Text>
+                  <Text style={styles.bdVal}>{v}%</Text>
+                </View>
+                <View style={styles.bar}>
+                  <View style={[styles.barFill, { width: `${v}%` }]} />
+                </View>
               </View>
             ))}
           </View>
         </View>
       </View>
 
-      <View style={styles.col}>
-        {/* For everyone */}
-        <Text style={styles.h2}>Made for every kind of mover</Text>
-        <View style={styles.grid}>
-          {FOR_WHO.map((f) => (
-            <View key={f.title} style={[styles.who, { flexBasis: wide ? '23%' : '100%' }]}>
-              <View style={styles.whoIcon}>
-                <Ionicons name={f.icon} size={22} color={colors.ink} />
+      {/* Types */}
+      <View style={[styles.col, styles.section]}>
+        <Text style={styles.kicker}>Every kind of home</Text>
+        <Text style={styles.h2}>From a PG near college to a flat in Bandra.</Text>
+        <View style={[styles.types, { marginTop: 36 }]}>
+          {TYPES.map((t) => (
+            <View key={t.key} style={[styles.type, { flexBasis: wide ? '18%' : mid ? '30%' : '46%' }]}>
+              <Image source={{ uri: t.photo }} style={styles.typeImg} />
+              <View style={{ padding: 14, gap: 4 }}>
+                <Text style={styles.typeTitle}>{t.key}</Text>
+                <Text style={styles.typeBody}>{t.body}</Text>
               </View>
-              <Text style={styles.typeTitle}>{f.title}</Text>
-              <Text style={styles.typeBody}>{f.body}</Text>
             </View>
           ))}
         </View>
-
-        {/* CTA */}
-        <View style={styles.cta}>
-          <Text style={[styles.h2, { marginTop: 0, textAlign: 'center', fontSize: wide ? 48 : 34 }]}>Your next home is one swipe away.</Text>
-          <Button title="Create your profile" variant="place" icon="arrow-forward" onPress={go} style={{ minWidth: 240 }} />
+        <View style={styles.areas}>
+          <Text style={styles.areasLabel}>Popular in Mumbai</Text>
+          {AREAS.map((a) => (
+            <View key={a} style={styles.area}>
+              <Text style={styles.areaText}>{a}</Text>
+            </View>
+          ))}
         </View>
       </View>
 
+      {/* Steps */}
+      <View style={[styles.col, styles.section, { paddingTop: 0 }]}>
+        <Text style={styles.kicker}>How it works</Text>
+        <Text style={styles.h2}>Three steps to your next home.</Text>
+        <View style={[styles.grid3, { marginTop: 36 }]}>
+          {[
+            ['Create your profile', 'Add your budget, move-in date, preferred areas and a few lifestyle answers. It takes two minutes.'],
+            ['Swipe on people and places', 'Like a flatmate or a room. Every card shows a score and the reasons behind it.'],
+            ['Match and move in', 'When the interest is mutual, chat directly, plan a visit and agree terms. No brokerage.'],
+          ].map(([t, b], i) => (
+            <View key={t} style={[styles.step, { flexBasis: wide ? '30%' : '100%' }]}>
+              <Text style={styles.stepNum}>{i + 1}</Text>
+              <Text style={styles.h3}>{t}</Text>
+              <Text style={styles.body}>{b}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      {/* Owners */}
+      <View style={[styles.col, { paddingBottom: 88 }]}>
+        <View style={[styles.owner, wide && { flexDirection: 'row' }]}>
+          <Image source={{ uri: OWNER }} style={[styles.ownerImg, wide ? { width: '46%', minHeight: 380 } : { height: 240 }]} />
+          <View style={{ flex: 1, padding: wide ? 48 : 24, justifyContent: 'center' }}>
+            <Text style={styles.kicker}>For owners and hosts</Text>
+            <Text style={[styles.h2, { fontSize: wide ? 34 : 28, lineHeight: wide ? 40 : 34 }]}>List a room, PG or stay. Choose who moves in.</Text>
+            {['Free to list, no commission', 'Requests arrive with a profile and match score', 'Accept, chat and confirm in one place'].map((p) => (
+              <View key={p} style={[styles.trustItem, { marginTop: 12 }]}>
+                <Ionicons name="checkmark-circle" size={18} color={colors.sea} />
+                <Text style={[styles.body, { color: colors.ink2 }]}>{p}</Text>
+              </View>
+            ))}
+            <Button title="List your place" variant="place" onPress={go} style={{ alignSelf: 'flex-start', marginTop: 24 }} />
+          </View>
+        </View>
+      </View>
+
+      {/* FAQ */}
+      <View style={[styles.col, { paddingBottom: 88, maxWidth: 820 }]}>
+        <Text style={[styles.h2, { textAlign: 'center', marginBottom: 28 }]}>Questions</Text>
+        {FAQ.map(([q, a], i) => (
+          <Pressable key={q} onPress={() => setOpen(open === i ? null : i)} style={styles.faq} accessibilityRole="button" accessibilityState={{ expanded: open === i }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <Text style={styles.faqQ}>{q}</Text>
+              <Ionicons name={open === i ? 'remove' : 'add'} size={20} color={colors.ink} />
+            </View>
+            {open === i && <Text style={[styles.body, { marginTop: 10 }]}>{a}</Text>}
+          </Pressable>
+        ))}
+      </View>
+
+      {/* CTA */}
+      <View style={[styles.col, { paddingBottom: 72 }]}>
+        <View style={styles.cta}>
+          <Text style={[styles.h2, { color: '#fff', textAlign: 'center', maxWidth: 640 }]}>Your next home in Mumbai starts here.</Text>
+          <Text style={[styles.body, { color: '#BDB8CA', textAlign: 'center' }]}>Create a free profile in two minutes.</Text>
+          <Button title="Get started" variant="accent" icon="arrow-forward" onPress={go} style={{ minWidth: 220, marginTop: 8 }} />
+        </View>
+      </View>
+
+      {/* Footer */}
       <View style={styles.footer}>
-        <View style={[styles.col, { flexDirection: wide ? 'row' : 'column', justifyContent: 'space-between', gap: 14, alignItems: wide ? 'center' : 'flex-start' }]}>
-          <Text style={[styles.h1, { color: colors.lime, fontSize: 30 }]}>kinnesto</Text>
-          <Text style={{ color: '#A79FC2' }}>© {new Date().getFullYear()} Kinnesto · kinnesto.com · Made in India 🇮🇳</Text>
+        <View style={[styles.col, { flexDirection: wide ? 'row' : 'column', justifyContent: 'space-between', gap: 28 }]}>
+          <View style={{ gap: 10, maxWidth: 320 }}>
+            <Text style={styles.footBrand}>kinnesto</Text>
+            <Text style={styles.footText}>Find your place and the people to share it with. Made in India.</Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 56, flexWrap: 'wrap' }}>
+            <View style={{ gap: 10 }}>
+              <Text style={styles.footHead}>Explore</Text>
+              <Text {...webLink('/in/mumbai')} style={styles.footLink}>Mumbai</Text>
+              <Text {...webLink('/about')} style={styles.footLink}>About</Text>
+              <Text {...webLink('/safety')} style={styles.footLink}>Safety</Text>
+            </View>
+            <View style={{ gap: 10 }}>
+              <Text style={styles.footHead}>Legal</Text>
+              <Text {...webLink('/privacy')} style={styles.footLink}>Privacy</Text>
+              <Text {...webLink('/terms')} style={styles.footLink}>Terms</Text>
+              <Text {...webLink('/delete-account')} style={styles.footLink}>Delete account</Text>
+            </View>
+          </View>
         </View>
-        {/* Plain links to the static SEO pages (they live outside the app, so no router navigation). */}
-        <View style={[styles.col, styles.footLinks]}>
-          {CITY_LINKS.map(([slug, name]) => (
-            <Text key={slug} {...webLink(`/in/${slug}`)} style={styles.footLink}>
-              {name}
-            </Text>
-          ))}
-        </View>
-        <View style={[styles.col, styles.footLinks]}>
-          {[['/about', 'About'], ['/safety', 'Safety'], ['/privacy', 'Privacy'], ['/terms', 'Terms']].map(([href, label]) => (
-            <Text key={href} {...webLink(href)} style={[styles.footLink, { color: colors.lime }]}>
-              {label}
-            </Text>
-          ))}
+        <View style={[styles.col, { marginTop: 36 }]}>
+          <Text style={styles.footText}>© {new Date().getFullYear()} Kinnesto · kinnesto.com</Text>
         </View>
       </View>
     </ScrollView>
@@ -242,48 +317,74 @@ export default function Welcome() {
 
 const styles = StyleSheet.create({
   col: { width: '100%', maxWidth: MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 20 },
-  nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 16 },
-  hero: { paddingTop: 28, paddingBottom: 56 },
+  nav: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 18 },
+  navLink: { fontWeight: '600', color: colors.ink2, fontSize: 15 },
+  hero: { paddingTop: 36, paddingBottom: 96 },
+  eyebrow: { flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'flex-start', backgroundColor: '#fff', borderWidth: 1, borderColor: colors.line, paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill, marginBottom: 24 },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.like },
+  eyebrowText: { fontWeight: '600', fontSize: 13, color: colors.ink2 },
   h1: { fontWeight: '900', color: colors.ink, letterSpacing: -2 },
-  marker: { paddingHorizontal: 10, borderRadius: 10, marginTop: 4, transform: [{ rotate: '-1.5deg' }], borderWidth: 2.5, borderColor: colors.ink },
-  lead: { color: '#3D3653', fontSize: 18, lineHeight: 28, maxWidth: 560, marginTop: 24 },
-  sticker: { alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 7, borderRadius: radius.pill, ...hard(3) },
-  stickerText: { fontWeight: '800', color: colors.ink, fontSize: 14 },
-  proof: { flexDirection: 'row', flexWrap: 'wrap', gap: 18, marginTop: 24 },
-  proofItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  proofText: { fontWeight: '700', color: colors.ink },
-  stage: { position: 'relative', alignSelf: 'center', width: '100%', maxWidth: 420 },
-  stackCard: { position: 'absolute', borderRadius: 26, overflow: 'hidden', backgroundColor: colors.plum, ...hard(6), borderWidth: 3 },
-  backCard: { top: 30, right: 0, width: '78%', height: '80%', transform: [{ rotate: '7deg' }] },
-  frontCard: { top: 50, left: 0, width: '78%', height: '82%', transform: [{ rotate: '-5deg' }] },
-  backInfo: { position: 'absolute', left: 0, right: 0, top: 0, padding: 16, paddingLeft: '30%', alignItems: 'flex-end', backgroundColor: 'rgba(23,17,43,0.6)' },
-  backPrice: { color: colors.lime, fontWeight: '900', fontSize: 20 },
-  backTitle: { color: '#fff', fontWeight: '700' },
-  frontInfo: { position: 'absolute', left: 0, right: 0, bottom: 0, padding: 18, paddingTop: 60, backgroundColor: 'rgba(23,17,43,0.62)' },
-  frontName: { color: '#fff', fontWeight: '900', fontSize: 34, letterSpacing: -1 },
-  frontMeta: { color: '#EDE8FA', fontWeight: '600' },
-  miniTag: { paddingHorizontal: 9, paddingVertical: 4, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.ink },
-  miniTagText: { fontWeight: '800', fontSize: 12, color: colors.ink },
-  stripClip: { width: '100%', overflow: 'hidden', paddingVertical: 14 },
-  strip: { backgroundColor: colors.ink, paddingVertical: 16, overflow: 'hidden', transform: [{ rotate: '-1.2deg' }], width: '110%', marginLeft: '-5%' },
-  stripText: { color: colors.lime, fontWeight: '900', fontSize: 24, letterSpacing: 1, textTransform: 'uppercase' },
-  h2: { fontSize: 40, fontWeight: '900', color: colors.ink, letterSpacing: -1.2, marginTop: 56, marginBottom: 22 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
-  typeCard: { flexGrow: 1, borderRadius: radius.lg, padding: 18, gap: 4, ...hard(4) },
-  typeTitle: { fontSize: 20, fontWeight: '900', color: colors.ink, letterSpacing: -0.3 },
-  typeBody: { fontSize: 14, color: '#3D3653', lineHeight: 20 },
-  step: { backgroundColor: '#fff', borderRadius: radius.lg, padding: 22, gap: 8, ...hard(4) },
-  stepNum: { fontSize: 54, fontWeight: '900', color: colors.violet, letterSpacing: -2, lineHeight: 58 },
-  stepTitle: { fontSize: 22, fontWeight: '900', color: colors.ink, letterSpacing: -0.4 },
-  stepBody: { fontSize: 15, color: '#3D3653', lineHeight: 22 },
-  vibeBlock: { backgroundColor: colors.plum, borderRadius: 30, padding: 28, gap: 24, ...hard(6) },
-  vibeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  vibeChip: { paddingHorizontal: 14, paddingVertical: 9, borderRadius: radius.pill, borderWidth: 2, borderColor: colors.ink },
-  vibeChipText: { fontWeight: '800', color: colors.ink, fontSize: 15 },
-  who: { flexGrow: 1, backgroundColor: '#fff', borderRadius: radius.lg, padding: 18, gap: 6, ...hard(4) },
-  whoIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.lime, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.ink, marginBottom: 4 },
-  cta: { marginTop: 64, marginBottom: 56, backgroundColor: colors.lime, borderRadius: 30, padding: 32, alignItems: 'center', gap: 20, ...hard(6) },
-  footer: { backgroundColor: colors.ink, paddingVertical: 28, gap: 14 },
-  footLinks: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
-  footLink: { color: '#D9D2F0', fontWeight: '600', fontSize: 14 },
+  lead: { color: colors.muted, fontSize: 18, lineHeight: 29, marginTop: 20, maxWidth: 520 },
+  search: { marginTop: 32, backgroundColor: '#fff', borderRadius: radius.xl, borderWidth: 1, borderColor: colors.line, padding: 12, paddingLeft: 18, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 14, ...shadow.md },
+  searchCity: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  searchLabel: { fontSize: 11, fontWeight: '700', color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  searchValue: { fontSize: 15, fontWeight: '700', color: colors.ink },
+  searchDivider: { width: 1, alignSelf: 'stretch', backgroundColor: colors.line },
+  lookChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill, backgroundColor: colors.paper },
+  lookChipOn: { backgroundColor: colors.ink },
+  lookText: { fontSize: 13, fontWeight: '600', color: colors.ink2 },
+  trust: { flexDirection: 'row', flexWrap: 'wrap', gap: 20, marginTop: 22 },
+  trustItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  trustText: { fontWeight: '600', color: colors.ink2, fontSize: 14 },
+  visual: { position: 'relative', width: '100%' },
+  heroImg: { width: '100%', height: '100%', borderRadius: 32, backgroundColor: '#E8E5DF' },
+  floatCard: { position: 'absolute', width: 300, maxWidth: '88%', backgroundColor: '#fff', borderRadius: 22, padding: 18, ...shadow.lg },
+  face: { width: 46, height: 46, borderRadius: 23, backgroundColor: colors.line },
+  fcName: { fontWeight: '900', fontSize: 16, color: colors.ink },
+  fcMeta: { fontSize: 13, color: colors.muted },
+  score: { backgroundColor: colors.marigoldSoft, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
+  scoreNum: { fontWeight: '900', color: colors.brandDark, fontSize: 16 },
+  fcDivider: { height: 1, backgroundColor: colors.line, marginVertical: 14 },
+  fcRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  fcReason: { fontSize: 14, color: colors.ink2, fontWeight: '500' },
+  floatChip: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.ink, paddingHorizontal: 14, paddingVertical: 10, borderRadius: radius.pill, ...shadow.md },
+  floatChipText: { color: '#fff', fontWeight: '600', fontSize: 13 },
+  section: { paddingVertical: 88 },
+  kicker: { fontSize: 13, fontWeight: '700', letterSpacing: 1.6, textTransform: 'uppercase', color: colors.brand, marginBottom: 14 },
+  h2: { fontSize: 38, lineHeight: 44, fontWeight: '900', color: colors.ink, letterSpacing: -1.2 },
+  h3: { fontSize: 19, fontWeight: '900', color: colors.ink, letterSpacing: -0.3 },
+  body: { fontSize: 15.5, lineHeight: 24, color: colors.muted },
+  grid3: { flexDirection: 'row', flexWrap: 'wrap', gap: 24 },
+  feature: { flexGrow: 1, gap: 10, paddingRight: 8 },
+  featureIcon: { width: 48, height: 48, borderRadius: 14, backgroundColor: colors.marigoldSoft, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
+  dark: { backgroundColor: colors.ink },
+  breakdown: { backgroundColor: '#1D1B27', borderRadius: 26, padding: 28, borderWidth: 1, borderColor: '#2E2B3B' },
+  bdLabel: { color: '#8C8899', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
+  bdTitle: { color: '#fff', fontSize: 20, fontWeight: '900', marginTop: 4 },
+  bdTotal: { color: colors.marigold, fontSize: 48, fontWeight: '900', letterSpacing: -1.5 },
+  bdRow: { color: '#D9D5E3', fontSize: 14, fontWeight: '600' },
+  bdVal: { color: '#8C8899', fontSize: 14, fontWeight: '600', fontVariant: ['tabular-nums'] },
+  bar: { height: 6, borderRadius: 3, backgroundColor: '#2E2B3B', overflow: 'hidden' },
+  barFill: { height: '100%', borderRadius: 3, backgroundColor: colors.marigold },
+  types: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
+  type: { flexGrow: 1, backgroundColor: '#fff', borderRadius: radius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.line },
+  typeImg: { width: '100%', aspectRatio: 4 / 3, backgroundColor: '#E8E5DF' },
+  typeTitle: { fontSize: 16, fontWeight: '900', color: colors.ink },
+  typeBody: { fontSize: 13.5, lineHeight: 20, color: colors.muted },
+  areas: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginTop: 28 },
+  areasLabel: { fontWeight: '700', color: colors.ink, marginRight: 6, fontSize: 14 },
+  area: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.line, backgroundColor: '#fff' },
+  areaText: { fontSize: 13, fontWeight: '600', color: colors.ink2 },
+  step: { flexGrow: 1, backgroundColor: '#fff', borderRadius: radius.lg, padding: 24, gap: 10, borderWidth: 1, borderColor: colors.line },
+  stepNum: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.ink, color: '#fff', textAlign: 'center', lineHeight: 34, fontWeight: '700', overflow: 'hidden', marginBottom: 4 },
+  owner: { backgroundColor: '#fff', borderRadius: 30, overflow: 'hidden', borderWidth: 1, borderColor: colors.line, ...shadow.sm },
+  ownerImg: { backgroundColor: '#E8E5DF' },
+  faq: { backgroundColor: '#fff', borderRadius: radius.lg, borderWidth: 1, borderColor: colors.line, padding: 20, marginBottom: 12 },
+  faqQ: { fontSize: 16, fontWeight: '700', color: colors.ink, flex: 1 },
+  cta: { backgroundColor: colors.ink, borderRadius: 32, paddingVertical: 64, paddingHorizontal: 24, alignItems: 'center', gap: 14 },
+  footer: { backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: colors.line, paddingVertical: 48 },
+  footBrand: { fontSize: 24, fontWeight: '900', color: colors.ink, letterSpacing: -0.6 },
+  footHead: { fontSize: 12, fontWeight: '700', color: colors.muted, textTransform: 'uppercase', letterSpacing: 1 },
+  footLink: { fontSize: 15, fontWeight: '600', color: colors.ink2 },
+  footText: { fontSize: 14, color: colors.muted, lineHeight: 21 },
 });

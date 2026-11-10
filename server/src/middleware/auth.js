@@ -2,6 +2,13 @@ const jwt = require('jsonwebtoken');
 const { config } = require('../config');
 const { User } = require('../models');
 
+const isAdmin = (user) => !!user && config.adminEmails.includes(user.email);
+
+function requireAdmin(req, res, next) {
+  if (!isAdmin(req.user)) return res.status(403).json({ error: 'Admins only' });
+  return next();
+}
+
 function signToken(user) {
   return jwt.sign({ sub: String(user._id) }, config.jwtSecret, { expiresIn: '30d' });
 }
@@ -17,6 +24,7 @@ async function requireAuth(req, res, next) {
   try {
     const user = await User.findById(verifyToken(token));
     if (!user) return res.status(401).json({ error: 'Account not found' });
+    if (user.banned) return res.status(403).json({ error: 'This account has been suspended. Contact hello@kinnesto.com if you think this is a mistake.', code: 'BANNED' });
     req.user = user;
     User.updateOne({ _id: user._id }, { lastActive: new Date() }).catch(() => {});
     return next();
@@ -31,4 +39,4 @@ function requireOnboarded(req, res, next) {
   return next();
 }
 
-module.exports = { signToken, verifyToken, requireAuth, requireOnboarded };
+module.exports = { signToken, verifyToken, requireAuth, requireOnboarded, requireAdmin, isAdmin };

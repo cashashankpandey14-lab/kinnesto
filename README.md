@@ -36,12 +36,29 @@ at `/api/options`, so the clients never hard-code them.
 
 ## Look and feel
 
-The "Lime & Plum" theme is meant to stand out to Gen Z without putting anyone else off: warm paper background, ink
-outlines with hard offset shadows, electric-lime actions, violet/lilac for people and lime for places, sticker-style
-badges, and a dark tab bar. Headlines use **Bricolage Grotesque**, body text **Plus Jakarta Sans** (Google Fonts via
-`@expo-google-fonts`). Tokens live in `app/src/lib/theme.ts`; `hard()` gives the outline + shadow. All text goes
-through `app/src/components/Text.tsx`, which maps `fontWeight` to the right font file, so use it instead of
-React Native's `Text`. Screenshots are in `app/design/screens/`.
+"Midnight & Marigold": deep ink and a cool off-white, one warm saffron accent (marigold) and a sea-teal for places.
+Depth comes from soft shadows and hairlines, and photography leads the layouts. Headlines use **Sora**, body text
+**Plus Jakarta Sans** (Google Fonts via `@expo-google-fonts`). Tokens live in `app/src/lib/theme.ts`. All text goes
+through `app/src/components/Text.tsx`, which maps `fontWeight` to the right font file (weight 900 = Sora), so use it
+instead of React Native's `Text`. Sora has no ₹ glyph, so prices use weight 800 (Plus Jakarta Sans).
+
+## Launch city
+
+Kinnesto is live in **Mumbai** only. `LAUNCH_CITIES` in `server/src/options.js` controls which cities people can pick
+and list in (others show "coming soon"); `LIVE` in `app/scripts/seo-data.js` controls which city pages are full and
+indexed. Add a city to both to open it.
+
+## Admin dashboard
+
+Members whose email is in `ADMIN_EMAILS` (set on Render; `shashank@nevejewels.com`) see **Admin dashboard** on the Me
+tab, at `/admin`: growth stats and a 14-day sign-up chart, member search with ban/unban and delete, listing moderation
+(hide/show/delete) and the reports queue. Banned members can't sign in and their listings are hidden. Locally,
+`npm run dev:memory` makes `ananya@demo.kinnesto.app` an admin.
+
+## Phone apps
+
+See [docs/app-store-release.md](docs/app-store-release.md) for building with EAS and publishing to Google Play and
+the App Store. Build profiles are in `app/eas.json`.
 
 ## Run it locally
 

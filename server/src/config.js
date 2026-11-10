@@ -11,6 +11,8 @@ const config = {
   // Seeded demo members like you back and demo hosts accept requests, so a fresh
   // install has matches and chats to try. Never enable in production.
   demoAutoReply: process.env.DEMO_AUTO_REPLY === 'true',
+  // Members with these emails see the admin dashboard (comma-separated).
+  adminEmails: (process.env.ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
   // Social sign-in. Leave unset to hide the buttons.
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',
   facebookAppId: process.env.FACEBOOK_APP_ID || '',

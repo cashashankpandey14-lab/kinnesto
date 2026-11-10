@@ -11,25 +11,29 @@ export function CityPicker({ value, onChange, tone }: { value: string; onChange:
   const [open, setOpen] = useState(false);
   return (
     <>
-      <Chip label={`📍 ${value}  ▾`} selected tone={tone} onPress={() => setOpen(true)} />
+      <Chip label={`${value}  ▾`} icon="location-outline" selected tone={tone} onPress={() => setOpen(true)} />
       <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
           <Pressable style={styles.sheet} onPress={() => {}}>
             <Text style={styles.title}>Choose a city</Text>
             <ScrollView style={{ maxHeight: 420 }}>
-              {options?.CITIES.map((c) => (
-                <Pressable
-                  key={c}
-                  style={styles.row}
-                  onPress={() => {
-                    onChange(c);
-                    setOpen(false);
-                  }}
-                >
-                  <Text style={[styles.city, c === value && { color: tone === 'place' ? colors.place : colors.brand }]}>{c}</Text>
-                  {c === value && <Ionicons name="checkmark" size={20} color={tone === 'place' ? colors.place : colors.brand} />}
-                </Pressable>
-              ))}
+              {options?.CITIES.map((c) => {
+                const live = options.LAUNCH_CITIES.includes(c);
+                return (
+                  <Pressable
+                    key={c}
+                    style={styles.row}
+                    disabled={!live}
+                    onPress={() => {
+                      onChange(c);
+                      setOpen(false);
+                    }}
+                  >
+                    <Text style={[styles.city, !live && { color: colors.muted }, c === value && { color: tone === 'place' ? colors.place : colors.brand }]}>{c}</Text>
+                    {live ? c === value && <Ionicons name="checkmark" size={20} color={tone === 'place' ? colors.place : colors.brand} /> : <Text style={styles.soon}>Coming soon</Text>}
+                  </Pressable>
+                );
+              })}
             </ScrollView>
           </Pressable>
         </Pressable>
@@ -44,4 +48,5 @@ const styles = StyleSheet.create({
   title: { fontSize: 18, fontWeight: '900', color: colors.ink, marginBottom: 8 },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: colors.line },
   city: { fontSize: 16, color: colors.ink, fontWeight: '600' },
+  soon: { fontSize: 12, fontWeight: '700', color: colors.muted },
 });

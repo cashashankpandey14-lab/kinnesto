@@ -56,7 +56,7 @@ export default function MeTab() {
           {user.age ? `, ${user.age}` : ''}
         </Text>
         <Text style={{ color: colors.muted }}>{[user.occupation, user.city].filter(Boolean).join(' · ')}</Text>
-        {intent && <Chip label={`${intent.emoji} ${intent.label}`} selected />}
+        {intent && <Chip label={`${intent.label}`} selected />}
       </View>
 
       <Card style={{ marginTop: 18 }}>
@@ -64,12 +64,22 @@ export default function MeTab() {
           <Text style={{ fontWeight: '800', color: colors.ink }}>Profile strength</Text>
           <Text style={{ fontWeight: '900', color: colors.ink, fontSize: 18 }}>{strength}%</Text>
         </View>
-        <View style={{ height: 14, borderRadius: 7, backgroundColor: colors.paper, overflow: 'hidden', borderWidth: 2, borderColor: colors.ink }}>
-          <View style={{ width: `${strength}%`, height: '100%', backgroundColor: colors.lime, borderRadius: radius.pill }} />
+        <View style={{ height: 8, borderRadius: 4, backgroundColor: colors.line, overflow: 'hidden' }}>
+          <View style={{ width: `${strength}%`, height: '100%', backgroundColor: colors.marigold, borderRadius: radius.pill }} />
         </View>
         {strength < 100 && <Text style={{ color: colors.muted, marginTop: 8, fontSize: 13 }}>More photos, lifestyle answers and a bio make your vibe scores more accurate.</Text>}
         <Button title="Edit profile" variant="secondary" icon="create-outline" onPress={() => router.push('/edit-profile')} style={{ marginTop: 14 }} />
       </Card>
+
+      {user.isAdmin && (
+        <Card style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.ink, borderColor: colors.ink }}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: '#fff', fontWeight: '900', fontSize: 17 }}>Admin dashboard</Text>
+            <Text style={{ color: '#BDB8CA', fontSize: 13 }}>Members, listings, reports and growth</Text>
+          </View>
+          <Button title="Open" variant="accent" small onPress={() => router.push('/admin')} />
+        </Card>
+      )}
 
       <SectionTitle>Looking for</SectionTitle>
       <Card>

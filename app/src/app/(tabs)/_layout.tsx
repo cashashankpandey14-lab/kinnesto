@@ -19,9 +19,9 @@ export default function TabsLayout() {
     <>
       <Tabs
         screenOptions={{
-          // Dark ink tab bar with a lime highlight: the app's signature at a glance.
-          tabBarActiveTintColor: colors.lime,
-          tabBarInactiveTintColor: '#8E86A8',
+          // Dark ink tab bar with a marigold highlight.
+          tabBarActiveTintColor: colors.marigold,
+          tabBarInactiveTintColor: '#8C8899',
           tabBarStyle: { backgroundColor: colors.ink, borderTopWidth: 0, height: 66, paddingTop: 7, paddingBottom: 9 },
           tabBarLabelStyle: { fontFamily: fonts.bold, fontSize: 11 },
           headerShadowVisible: false,

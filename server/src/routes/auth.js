@@ -28,6 +28,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const email = String(req.body.email || '').trim().toLowerCase();
   const user = await User.findOne({ email });
+  if (user?.banned) return res.status(403).json({ error: 'This account has been suspended. Contact hello@kinnesto.com if you think this is a mistake.' });
   if (user && !user.passwordHash) {
     return res.status(401).json({ error: `This account uses ${user.googleId ? 'Google' : 'Facebook'} sign-in. Use that button instead.` });
   }
@@ -41,6 +42,7 @@ router.post('/login', async (req, res) => {
 async function socialSignIn(res, { provider, id, email, name, photo }) {
   const key = provider === 'google' ? 'googleId' : 'facebookId';
   let user = (await User.findOne({ [key]: id })) || (await User.findOne({ email }));
+  if (user?.banned) return res.status(403).json({ error: 'This account has been suspended. Contact hello@kinnesto.com if you think this is a mistake.' });
   const created = !user;
   if (!user) user = new User({ email });
   user[key] = id;

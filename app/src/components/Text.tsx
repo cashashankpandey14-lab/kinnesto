@@ -3,7 +3,7 @@ import { StyleSheet, Text as RNText, TextInput as RNTextInput, type TextInputPro
 import { fonts } from '@/lib/theme';
 
 // Custom fonts need a family per weight, so map fontWeight to the right file.
-// 900 is the display face (Bricolage Grotesque); everything else is Plus Jakarta Sans.
+// 900 is the display face (Sora); everything else is Plus Jakarta Sans.
 function withFont(style: TextProps['style']) {
   const s = (StyleSheet.flatten(style) || {}) as TextStyle;
   if (s.fontFamily) return style;

@@ -1,41 +1,41 @@
-// Kinnesto "Lime & Plum": warm paper, ink outlines, hard shadows, electric lime for actions,
-// violet for people, lime-green for places. Loud enough for Gen Z, calm enough to read for everyone.
+// Kinnesto "Midnight & Marigold": deep ink, cool off-white, one warm saffron accent and a sea-teal for places.
+// Depth comes from soft shadows and hairlines, not outlines. Photography does the talking.
 export const colors = {
-  ink: '#17112B',
-  paper: '#FBF7EF',
-  lime: '#CCFF4D',
-  limeSoft: '#EEFFC4',
-  violet: '#6C3BFF',
-  lilac: '#BBA6FF',
-  pink: '#FF5FA2',
-  plum: '#2A1660',
-  tangerine: '#FF7A3D',
+  ink: '#121119',
+  ink2: '#2B2838',
+  paper: '#F6F5F2',
+  marigold: '#F4A51C',
+  marigoldSoft: '#FFF3DC',
+  sea: '#11615F',
+  seaSoft: '#E2F1EF',
+  rose: '#E2546B',
 
   // Semantic tokens used across screens.
-  brand: '#6C3BFF',
-  brandDark: '#3A1C9E',
-  brandSoft: '#EEE7FF',
-  place: '#177245',
-  placeSoft: '#EEFFC4',
-  bg: '#FBF7EF',
+  brand: '#B86E00', // marigold, deepened for text on light backgrounds
+  brandDark: '#7A4800',
+  brandSoft: '#FFF3DC',
+  place: '#11615F',
+  placeSoft: '#E2F1EF',
+  bg: '#F6F5F2',
   card: '#FFFFFF',
-  muted: '#6B6580',
-  line: '#E8E0D3',
-  like: '#19B86B',
-  nope: '#FF4D6D',
-  gold: '#F59E0B',
-  goldSoft: '#FEF3C7',
+  muted: '#6C6878',
+  line: '#E5E2DC',
+  like: '#1E9E6A',
+  nope: '#E2546B',
+  gold: '#F4A51C',
+  goldSoft: '#FFF3DC',
 };
 
 export const gradients = {
-  brand: ['#6C3BFF', '#A24BFF', '#FF5FA2'] as const,
-  place: ['#CCFF4D', '#9BF27A'] as const,
-  night: ['#1B0F3D', '#2A1660', '#4B1F86'] as const,
-  scrim: ['transparent', 'rgba(23,17,43,0.55)', 'rgba(23,17,43,0.94)'] as const,
+  brand: ['#F8B840', '#F4A51C', '#E58E0B'] as const,
+  place: ['#167A77', '#11615F'] as const,
+  night: ['#0C0B12', '#1A1826', '#25212F'] as const,
+  scrim: ['transparent', 'rgba(12,11,18,0.45)', 'rgba(12,11,18,0.9)'] as const,
 };
 
 export const fonts = {
-  display: 'BricolageGrotesque_800ExtraBold',
+  display: 'Sora_600SemiBold',
+  displayBold: 'Sora_700Bold',
   extrabold: 'PlusJakartaSans_800ExtraBold',
   bold: 'PlusJakartaSans_700Bold',
   semibold: 'PlusJakartaSans_600SemiBold',
@@ -43,10 +43,21 @@ export const fonts = {
   regular: 'PlusJakartaSans_400Regular',
 };
 
-export const radius = { sm: 8, md: 14, lg: 22, pill: 999 };
+export const radius = { sm: 10, md: 14, lg: 20, xl: 28, pill: 999 };
 
-// Ink outline + hard offset shadow: the signature look. boxShadow works on iOS, Android and web.
-export const hard = (offset = 4) => ({ borderWidth: 2, borderColor: colors.ink, boxShadow: `${offset}px ${offset}px 0px ${colors.ink}` });
+// Soft elevation used for cards and floating controls (boxShadow works on iOS, Android and web).
+export const shadow = {
+  sm: { boxShadow: '0px 1px 2px rgba(18,17,25,0.06), 0px 2px 8px rgba(18,17,25,0.05)' },
+  md: { boxShadow: '0px 2px 6px rgba(18,17,25,0.06), 0px 12px 32px rgba(18,17,25,0.08)' },
+  lg: { boxShadow: '0px 8px 24px rgba(18,17,25,0.10), 0px 32px 64px rgba(18,17,25,0.14)' },
+};
+
+// A hairline-bordered surface with soft elevation. (Kept under the old name so existing callers restyle with it.)
+export const hard = (level: 1 | 2 | 3 | 4 | 5 | 6 = 2) => ({
+  borderWidth: 1,
+  borderColor: colors.line,
+  ...(level >= 5 ? shadow.lg : level >= 3 ? shadow.md : shadow.sm),
+});
 
 // Content column width on wide (web/tablet) screens.
-export const MAX_WIDTH = 1120;
+export const MAX_WIDTH = 1160;

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRef, type ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
-import { colors, hard } from '@/lib/theme';
+import { colors, shadow } from '@/lib/theme';
 import { Swipeable, type SwipeDir, type SwipeableHandle } from './Swipeable';
 
 // A stack of swipe cards with Pass / Info / Like buttons. Shows two cards so the next one peeks.
@@ -13,7 +13,7 @@ export function Deck<T extends { id: string }>({
   onInfo,
   empty,
   likeLabel,
-  likeColor = colors.lime,
+  likeColor = colors.marigold,
 }: {
   items: T[];
   loading: boolean;
@@ -52,14 +52,14 @@ export function Deck<T extends { id: string }>({
         })}
       </View>
       <View style={styles.actions}>
-        <Pressable style={[styles.action, { backgroundColor: colors.pink }]} onPress={() => top.current?.swipe('pass')} accessibilityLabel="Pass">
-          <Ionicons name="close" size={32} color={colors.ink} />
+        <Pressable style={styles.action} onPress={() => top.current?.swipe('pass')} accessibilityLabel="Pass">
+          <Ionicons name="close" size={30} color={colors.nope} />
         </Pressable>
         <Pressable style={[styles.action, styles.small]} onPress={() => onInfo(items[0])} accessibilityLabel="More info">
-          <Ionicons name="information" size={24} color={colors.ink} />
+          <Ionicons name="information" size={22} color={colors.muted} />
         </Pressable>
         <Pressable style={[styles.action, { backgroundColor: likeColor }]} onPress={() => top.current?.swipe('like')} accessibilityLabel="Like">
-          <Ionicons name="heart" size={30} color={colors.ink} />
+          <Ionicons name="heart" size={28} color={likeColor === colors.marigold ? colors.ink : '#fff'} />
         </Pressable>
       </View>
     </View>
@@ -69,16 +69,18 @@ export function Deck<T extends { id: string }>({
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   stack: { flex: 1, marginHorizontal: 14, marginTop: 4 },
-  under: { borderRadius: 22, overflow: 'hidden', transform: [{ rotate: '3deg' }, { scale: 0.96 }], backgroundColor: colors.plum, borderWidth: 3, borderColor: colors.ink },
+  under: { borderRadius: 24, overflow: 'hidden', transform: [{ scale: 0.95 }, { translateY: 14 }], opacity: 0.7, backgroundColor: colors.ink2 },
   actions: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 22, paddingVertical: 14 },
   action: {
     width: 66,
     height: 66,
     borderRadius: 33,
     backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.line,
     alignItems: 'center',
     justifyContent: 'center',
-    ...hard(4),
+    ...shadow.md,
   },
-  small: { width: 50, height: 50, backgroundColor: colors.lilac },
+  small: { width: 50, height: 50 },
 });

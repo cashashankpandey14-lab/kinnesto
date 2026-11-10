@@ -51,7 +51,7 @@ export default function Onboarding() {
     <View style={{ flex: 1, backgroundColor: colors.bg, paddingTop: insets.top }}>
       <View style={{ flexDirection: 'row', gap: 6, paddingHorizontal: 18, paddingTop: 12, maxWidth: 720, width: '100%', alignSelf: 'center' }}>
         {STEPS.map((s, i) => (
-          <View key={s.title} style={{ flex: 1, height: 5, borderRadius: 3, backgroundColor: i <= step ? colors.violet : colors.line }} />
+          <View key={s.title} style={{ flex: 1, height: 5, borderRadius: 3, backgroundColor: i <= step ? colors.marigold : colors.line }} />
         ))}
       </View>
       <Screen>
