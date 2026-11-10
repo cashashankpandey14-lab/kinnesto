@@ -7,7 +7,9 @@ const ref = (name) => ({ type: Schema.Types.ObjectId, ref: name });
 const userSchema = new Schema(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true },
+    passwordHash: String, // empty for people who only sign in with Google or Facebook
+    googleId: { type: String, index: true, sparse: true },
+    facebookId: { type: String, index: true, sparse: true },
     name: { type: String, trim: true, maxlength: 40 },
     birthYear: Number,
     gender: { type: String, enum: Object.keys(O.GENDERS) },

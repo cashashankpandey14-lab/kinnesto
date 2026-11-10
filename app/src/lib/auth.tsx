@@ -13,6 +13,8 @@ interface AuthState {
   options: Options | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
+  // Google ID token ({ credential }) or Facebook access token ({ accessToken }).
+  signInWith: (provider: 'google' | 'facebook', body: Record<string, string>) => Promise<void>;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
   apply: (res: { user?: Me }) => void;
@@ -90,6 +92,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback((email: string, password: string) => enter('/auth/login', email, password), [enter]);
   const signUp = useCallback((email: string, password: string) => enter('/auth/register', email, password), [enter]);
 
+  const signInWith = useCallback(
+    async (provider: 'google' | 'facebook', body: Record<string, string>) => {
+      const res = await api<{ token: string; user: Me }>(`/auth/${provider}`, { method: 'POST', body });
+      await applyToken(res.token);
+      setUser(res.user);
+    },
+    [applyToken]
+  );
+
   const signOut = useCallback(async () => {
     await applyToken(null);
     setUser(null);
@@ -99,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     apply(await api('/me'));
   }, [apply]);
 
-  return <AuthContext.Provider value={{ ready, user, options, signIn, signUp, signOut, refresh, apply, on }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ ready, user, options, signIn, signUp, signInWith, signOut, refresh, apply, on }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

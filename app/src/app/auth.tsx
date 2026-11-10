@@ -1,8 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { LogoMark } from '@/components/Logo';
+import { SocialSignIn } from '@/components/SocialSignIn';
 import { Button, ErrorText, Field, Screen } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { colors } from '@/lib/theme';
@@ -16,6 +17,9 @@ export default function Auth() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const isLogin = mode === 'login';
+
+  const onSocialDone = useCallback(() => router.replace('/'), []);
+  const onSocialError = useCallback((msg: string) => setError(msg), []);
 
   async function submit() {
     setError(null);
@@ -37,6 +41,7 @@ export default function Auth() {
         <Text style={{ fontSize: 28, fontWeight: '900', color: colors.ink }}>{isLogin ? 'Welcome back' : 'Join Kinnesto'}</Text>
         <Text style={{ color: colors.muted, textAlign: 'center' }}>{isLogin ? 'Sign in to your matches and chats.' : 'Find a room, a flatmate, or both.'}</Text>
       </View>
+      <SocialSignIn onDone={onSocialDone} onError={onSocialError} />
       <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoComplete="email" keyboardType="email-address" placeholder="you@example.com" />
       <Field
         label="Password"

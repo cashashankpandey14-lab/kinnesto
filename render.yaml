@@ -25,3 +25,9 @@ services:
         value: https://api.kinnesto.com
       - key: CORS_ORIGINS
         value: https://kinnesto.com,https://www.kinnesto.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: FACEBOOK_APP_ID
+        sync: false
+      - key: FACEBOOK_APP_SECRET
+        sync: false

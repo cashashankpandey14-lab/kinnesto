@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
-import { Image, ScrollView, StyleSheet, useWindowDimensions, View, type ViewStyle } from 'react-native';
+import { Image, Linking, Platform, ScrollView, StyleSheet, useWindowDimensions, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Logo } from '@/components/Logo';
 import { Text } from '@/components/Text';
@@ -28,6 +28,11 @@ const FOR_WHO = [
   { icon: 'people', title: 'Couples & families', body: 'Entire flats and short stays while you settle into a new city.' },
   { icon: 'key', title: 'Owners & hosts', body: 'List a room, PG or BnB free, and pick tenants by vibe, not just paperwork.' },
 ] as const;
+
+const CITY_LINKS = [['bengaluru', 'Bengaluru'], ['mumbai', 'Mumbai'], ['delhi', 'Delhi'], ['gurugram', 'Gurugram'], ['noida', 'Noida'], ['pune', 'Pune'], ['hyderabad', 'Hyderabad'], ['chennai', 'Chennai'], ['kolkata', 'Kolkata'], ['goa', 'Goa']];
+
+// react-native-web renders a Text with href as a real <a>, which crawlers follow.
+const webLink = (href: string) => (Platform.OS === 'web' ? ({ href, role: 'link' } as object) : { onPress: () => Linking.openURL(`https://kinnesto.com${href}`) });
 
 const VIBES = ['🌙 Night owl', '🥦 Veg', '✨ Neat freak', '🎮 Gamer', '🐶 Pet parent', '☕ WFH', '🎉 Social', '🧘 Calm'];
 
@@ -215,6 +220,21 @@ export default function Welcome() {
           <Text style={[styles.h1, { color: colors.lime, fontSize: 30 }]}>kinnesto</Text>
           <Text style={{ color: '#A79FC2' }}>© {new Date().getFullYear()} Kinnesto · kinnesto.com · Made in India 🇮🇳</Text>
         </View>
+        {/* Plain links to the static SEO pages (they live outside the app, so no router navigation). */}
+        <View style={[styles.col, styles.footLinks]}>
+          {CITY_LINKS.map(([slug, name]) => (
+            <Text key={slug} {...webLink(`/in/${slug}`)} style={styles.footLink}>
+              {name}
+            </Text>
+          ))}
+        </View>
+        <View style={[styles.col, styles.footLinks]}>
+          {[['/about', 'About'], ['/safety', 'Safety'], ['/privacy', 'Privacy'], ['/terms', 'Terms']].map(([href, label]) => (
+            <Text key={href} {...webLink(href)} style={[styles.footLink, { color: colors.lime }]}>
+              {label}
+            </Text>
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
@@ -263,5 +283,7 @@ const styles = StyleSheet.create({
   who: { flexGrow: 1, backgroundColor: '#fff', borderRadius: radius.lg, padding: 18, gap: 6, ...hard(4) },
   whoIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.lime, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.ink, marginBottom: 4 },
   cta: { marginTop: 64, marginBottom: 56, backgroundColor: colors.lime, borderRadius: 30, padding: 32, alignItems: 'center', gap: 20, ...hard(6) },
-  footer: { backgroundColor: colors.ink, paddingVertical: 28 },
+  footer: { backgroundColor: colors.ink, paddingVertical: 28, gap: 14 },
+  footLinks: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
+  footLink: { color: '#D9D2F0', fontWeight: '600', fontSize: 14 },
 });

@@ -11,6 +11,10 @@ const config = {
   // Seeded demo members like you back and demo hosts accept requests, so a fresh
   // install has matches and chats to try. Never enable in production.
   demoAutoReply: process.env.DEMO_AUTO_REPLY === 'true',
+  // Social sign-in. Leave unset to hide the buttons.
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+  facebookAppId: process.env.FACEBOOK_APP_ID || '',
+  facebookAppSecret: process.env.FACEBOOK_APP_SECRET || '',
 };
 
 if (process.env.NODE_ENV === 'production' && config.jwtSecret === 'dev-only-secret') {

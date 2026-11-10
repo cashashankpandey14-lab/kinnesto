@@ -89,7 +89,7 @@ In the Claude desktop app, the `kinnesto-api` and `kinnesto-web` previews (port 
 - **Search radius**: matching is by city plus preferred areas. Storing coordinates would enable "within 5 km of my office".
 - **Deploy** (live at https://kinnesto.com):
   - **Website** → Vercel project `kinnesto` (team `lunexim`), uploaded as a prebuilt static site:
-    `cd app && EXPO_PUBLIC_API_URL=https://api.kinnesto.com npm run export:web && cd dist && vercel link --yes --project kinnesto && vercel deploy --prod --yes`
+    `cd app && EXPO_PUBLIC_API_URL=https://api.kinnesto.com npm run export:web && cd web-build && vercel link --yes --project kinnesto && vercel deploy --prod --yes`
   - **API** → Render service `kinnesto-api` from `render.yaml` (Blueprint), free plan, Singapore, custom domain `api.kinnesto.com`.
     Pushing to GitHub redeploys it. Free plan sleeps after ~15 min idle, so the first request after that takes ~30 s.
   - **Database** → the existing Atlas cluster shared with Lunexim, separate database `kinnesto` (`DB_NAME`). Photos are stored in it via GridFS.
