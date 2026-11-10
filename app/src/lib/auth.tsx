@@ -43,7 +43,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     (async () => {
-      const opts = api<Options>('/options').then(setOptions).catch(() => {});
+      // Older servers don't send LAUNCH_CITIES; default to Mumbai so city pickers never break.
+      const opts = api<Options>('/options')
+        .then((o) => setOptions({ ...o, LAUNCH_CITIES: o.LAUNCH_CITIES ?? ['Mumbai'] }))
+        .catch(() => {});
       const saved = await tokenStore.get();
       if (saved) {
         setApiToken(saved);
