@@ -115,7 +115,7 @@ function listingFit(user, listing, owner) {
     const days = (new Date(listing.availableFrom) - new Date(user.moveIn)) / 86400000;
     if (days <= 10) {
       score += 5;
-      if (days >= -30) reasons.push('Free when you move');
+      if (days >= -30) reasons.push('Available when you move in');
     }
   }
   if (owner && owner.onboarded && listing.type !== 'bnb' && listing.type !== 'hostel') {

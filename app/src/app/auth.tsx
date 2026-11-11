@@ -7,6 +7,9 @@ import { SocialSignIn } from '@/components/SocialSignIn';
 import { Button, ErrorText, Field, Screen } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { colors } from '@/lib/theme';
+import { Linking, Platform } from 'react-native';
+
+const webLink = (href: string) => (Platform.OS === 'web' ? ({ href, role: 'link' } as object) : { onPress: () => Linking.openURL(`https://kinnesto.com${href}`) });
 
 export default function Auth() {
   const params = useLocalSearchParams<{ mode?: string }>();
@@ -54,6 +57,17 @@ export default function Auth() {
       />
       <ErrorText>{error}</ErrorText>
       <Button title={isLogin ? 'Sign in' : 'Create account'} onPress={submit} loading={busy} disabled={!email || !password} />
+      {isLogin && (
+        <Text style={{ color: colors.muted, fontSize: 13, textAlign: 'center', marginTop: 14 }}>
+          Forgot your password? Use “Continue with Google” with the same email to get back in, or write to hello@kinnesto.com.
+        </Text>
+      )}
+      {!isLogin && (
+        <Text style={{ color: colors.muted, fontSize: 12, textAlign: 'center', marginTop: 14, lineHeight: 18 }}>
+          By creating an account you agree to our <Text {...webLink('/terms')} style={{ color: colors.ink, fontWeight: '600', textDecorationLine: 'underline' }}>Terms</Text> and{' '}
+          <Text {...webLink('/privacy')} style={{ color: colors.ink, fontWeight: '600', textDecorationLine: 'underline' }}>Privacy Policy</Text>. You must be 18 or older.
+        </Text>
+      )}
       <Pressable onPress={() => setMode(isLogin ? 'register' : 'login')} style={{ marginTop: 18, alignItems: 'center' }}>
         <Text style={{ color: colors.brand, fontWeight: '700' }}>{isLogin ? 'New here? Create an account' : 'Already have an account? Sign in'}</Text>
       </Pressable>

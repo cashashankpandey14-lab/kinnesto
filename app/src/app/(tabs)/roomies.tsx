@@ -1,6 +1,6 @@
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, Share, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PersonCard } from '@/components/Cards';
@@ -40,6 +40,15 @@ export default function Roomies() {
     }, [load])
   );
 
+  async function invite() {
+    const message = 'I’m using Kinnesto to find flats and flatmates in Mumbai. No brokers, and it matches you on lifestyle: https://kinnesto.com';
+    try {
+      await Share.share({ message });
+    } catch {
+      notify('Share this link', 'https://kinnesto.com');
+    }
+  }
+
   async function swipe(p: Person, dir: 'like' | 'pass') {
     setPeople((list) => list.filter((x) => x.id !== p.id));
     try {
@@ -73,10 +82,15 @@ export default function Roomies() {
           renderCard={(p) => <PersonCard person={p} onInfo={() => router.push(`/person/${p.id}`)} />}
           empty={
             <Empty
-              icon="people"
-              title="You’ve seen everyone here"
-              body={`New people join ${city} every day. Try another city or filter, or browse places meanwhile.`}
-              action={<Button title="Browse places" variant="place" onPress={() => router.push('/places')} style={{ minWidth: 200 }} />}
+              icon="people-outline"
+              title="No new people right now"
+              body={`Kinnesto is new in ${city} and people join every day. Invite a friend who’s flat-hunting, or browse places meanwhile.`}
+              action={
+                <View style={{ gap: 10, alignItems: 'center' }}>
+                  <Button title="Invite a friend" icon="share-outline" onPress={invite} style={{ minWidth: 220 }} />
+                  <Button title="Browse places" variant="secondary" onPress={() => router.push('/places')} style={{ minWidth: 220 }} />
+                </View>
+              }
             />
           }
         />

@@ -2,6 +2,8 @@ const express = require('express');
 const { User, Listing, Interest, Match, Message, Report } = require('../models');
 const { presentListing } = require('../lib/present');
 const { deleteUserData } = require('../lib/accounts');
+const { disconnectUser } = require('../socket');
+const { deletePhoto } = require('../lib/upload');
 
 const router = express.Router();
 const DAY = 86400000;
@@ -78,7 +80,12 @@ router.post('/users/:id/ban', async (req, res) => {
   u.banned = Boolean(req.body.banned);
   await u.save();
   // A banned member's listings disappear from search; unbanning doesn't relist them automatically.
-  if (u.banned) await Listing.updateMany({ owner: u._id }, { active: false });
+  if (u.banned) {
+    await Promise.all([Listing.updateMany({ owner: u._id }, { active: false, adminHidden: true }), Match.updateMany({ users: u._id }, { active: false })]);
+    disconnectUser(u._id);
+  } else {
+    await Listing.updateMany({ owner: u._id }, { adminHidden: false });
+  }
   res.json({ user: userRow(u) });
 });
 
@@ -103,7 +110,8 @@ router.get('/listings', async (req, res) => {
 });
 
 router.patch('/listings/:id', async (req, res) => {
-  const l = await Listing.findByIdAndUpdate(req.params.id, { active: Boolean(req.body.active) }, { new: true }).catch(() => null);
+  const show = Boolean(req.body.active);
+  const l = await Listing.findByIdAndUpdate(req.params.id, { active: show, adminHidden: !show }, { new: true }).catch(() => null);
   if (!l) return res.status(404).json({ error: 'Listing not found' });
   res.json({ listing: presentListing(l) });
 });
@@ -112,6 +120,7 @@ router.delete('/listings/:id', async (req, res) => {
   const l = await Listing.findByIdAndDelete(req.params.id).catch(() => null);
   if (!l) return res.status(404).json({ error: 'Listing not found' });
   await Interest.deleteMany({ listing: l._id });
+  l.photos.forEach((p) => deletePhoto(p).catch(() => {}));
   res.json({ ok: true });
 });
 

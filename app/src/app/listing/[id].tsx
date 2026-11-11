@@ -3,6 +3,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text } from '@/components/Text';
+import { ReportSheet } from '@/components/ReportSheet';
 import { Button, Card, Field, FitPill, Loading, notify, SectionTitle, Stepper } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -30,6 +31,7 @@ export default function ListingScreen() {
   const [guests, setGuests] = useState(1);
   const [busy, setBusy] = useState(false);
   const [photo, setPhoto] = useState(0);
+  const [reporting, setReporting] = useState(false);
 
   useEffect(() => {
     api<{ listing: Listing; mine: boolean; request: RequestState | null }>(`/listings/${id}`)
@@ -104,12 +106,12 @@ export default function ListingScreen() {
         </View>
 
         <View style={styles.col}>
-          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginTop: 18 }}>
             <Text style={styles.type}>
               {t.label}
             </Text>
             {listing.fit != null && !mine && <FitPill score={listing.fit} />}
-            {!listing.active && <Text style={{ color: colors.nope, fontWeight: '800' }}>Paused</Text>}
+            {!listing.active && <Text style={{ color: colors.nope, fontWeight: '800' }}>{listing.adminHidden ? 'Hidden by Kinnesto' : 'Paused'}</Text>}
           </View>
           <Text style={styles.title}>{listing.title}</Text>
           <Text style={styles.loc}>
@@ -199,8 +201,35 @@ export default function ListingScreen() {
               </Card>
             </>
           )}
+          {mine && listing.adminHidden && (
+            <Card style={{ marginTop: 20, borderColor: colors.nope }}>
+              <Text style={{ fontWeight: '800', color: colors.ink }}>This listing is hidden while we review it</Text>
+              <Text style={{ color: colors.muted, marginTop: 4 }}>It isn’t shown to anyone right now. Write to hello@kinnesto.com if you think this is a mistake.</Text>
+            </Card>
+          )}
+          {!mine && (
+            <Pressable onPress={() => setReporting(true)} style={{ alignSelf: 'center', marginTop: 28, flexDirection: 'row', alignItems: 'center', gap: 6 }} accessibilityRole="button">
+              <Ionicons name="flag-outline" size={15} color={colors.muted} />
+              <Text style={{ color: colors.muted, fontWeight: '600' }}>Report this listing</Text>
+            </Pressable>
+          )}
         </View>
       </ScrollView>
+      <ReportSheet
+        title="Report this listing"
+        actionLabel="Send report"
+        visible={reporting}
+        onClose={() => setReporting(false)}
+        onSubmit={async (reason, details) => {
+          try {
+            await api('/reports', { method: 'POST', body: { listingId: listing.id, reason, details } });
+            setReporting(false);
+            notify('Thanks for reporting', 'Our team will review this listing.');
+          } catch (e: any) {
+            notify('Couldn’t send report', e.message);
+          }
+        }}
+      />
 
       <View style={styles.bar}>
         <View style={[styles.col, { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 }]}>
@@ -235,7 +264,7 @@ const styles = StyleSheet.create({
   col: { width: '100%', maxWidth: 760, alignSelf: 'center', paddingHorizontal: 18 },
   counter: { position: 'absolute', right: 14, bottom: 14, backgroundColor: 'rgba(0,0,0,0.55)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: radius.pill },
   counterText: { color: '#fff', fontWeight: '700', fontSize: 12 },
-  type: { fontWeight: '800', color: colors.place, marginTop: 18 },
+  type: { fontWeight: '800', color: colors.place },
   title: { fontSize: 26, fontWeight: '900', color: colors.ink, marginTop: 6, letterSpacing: -0.5 },
   loc: { color: colors.muted, marginTop: 6, fontSize: 15 },
   price: { fontSize: 22, fontWeight: '800', color: colors.ink, marginTop: 10 },

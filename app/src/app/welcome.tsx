@@ -90,7 +90,7 @@ export default function Welcome() {
           <Text style={styles.lead}>Flats, PGs, hostels, co-living and stays across Mumbai, plus flatmates matched on budget, timing and lifestyle. Free, with no brokers.</Text>
 
           {/* Search-style starter */}
-          <View style={styles.search}>
+          <View style={[styles.search, !mid && { flexDirection: 'column', alignItems: 'stretch', paddingLeft: 14 }]}>
             <View style={styles.searchCity}>
               <Ionicons name="location-outline" size={18} color={colors.muted} />
               <View>
@@ -98,7 +98,7 @@ export default function Welcome() {
                 <Text style={styles.searchValue}>Mumbai</Text>
               </View>
             </View>
-            <View style={styles.searchDivider} />
+            {mid && <View style={styles.searchDivider} />}
             <View style={{ flex: 1, minWidth: 0 }}>
               <Text style={[styles.searchLabel, { marginLeft: 4 }]}>Looking for</Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
@@ -109,7 +109,7 @@ export default function Welcome() {
                 ))}
               </View>
             </View>
-            <Button title="Start" icon="arrow-forward" onPress={go} style={mid ? { alignSelf: 'center' } : { marginTop: 4 }} />
+            <Button title="Start" icon="arrow-forward" onPress={go} style={mid ? { alignSelf: 'center' } : undefined} />
           </View>
           <View style={styles.trust}>
             {['Free to use', 'No brokerage', 'Direct chat with owners'].map((t) => (

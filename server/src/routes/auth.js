@@ -28,7 +28,13 @@ router.post('/register', async (req, res) => {
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Enter a valid email' });
   if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
   if (await User.exists({ email })) return res.status(409).json({ error: 'An account with this email already exists' });
-  const user = await User.create({ email, passwordHash: await bcrypt.hash(password, 10) });
+  let user;
+  try {
+    user = await User.create({ email, passwordHash: await bcrypt.hash(password, 10) });
+  } catch (e) {
+    if (e.code === 11000) return res.status(409).json({ error: 'An account with this email already exists' });
+    throw e;
+  }
   res.status(201).json({ token: signToken(user), user: presentMe(user) });
 });
 
@@ -52,6 +58,7 @@ async function socialSignIn(res, { provider, id, email, name, photo }) {
   if (user?.banned) return res.status(403).json({ error: 'This account has been suspended. Contact hello@kinnesto.com if you think this is a mistake.' });
   const created = !user;
   if (!user) user = new User({ email });
+  if (!created && !user.googleId && !user.facebookId && user.passwordHash) user.passwordHash = undefined;
   user[key] = id;
   if (!user.name && name) user.name = name.split(' ')[0].slice(0, 40);
   if (!user.photos.length && photo) user.photos.push(photo);

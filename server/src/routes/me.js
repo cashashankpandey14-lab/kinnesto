@@ -34,7 +34,11 @@ router.patch('/', async (req, res) => {
   if (b.intent !== undefined && O.INTENTS[b.intent]) u.intent = b.intent;
   if (b.budgetMin !== undefined) u.budgetMin = Math.max(0, Number(b.budgetMin) || 0);
   if (b.budgetMax !== undefined) u.budgetMax = Math.max(0, Number(b.budgetMax) || 0);
-  if (b.moveIn !== undefined) u.moveIn = b.moveIn ? new Date(b.moveIn) : undefined;
+  if (b.moveIn !== undefined) {
+    const d = b.moveIn ? new Date(b.moveIn) : null;
+    if (d && Number.isNaN(+d)) return res.status(400).json({ error: 'Enter the move-in date as YYYY-MM-DD, or pick one of the quick options' });
+    u.moveIn = d || undefined;
+  }
   if (b.flatmateGender !== undefined && O.GENDER_PREFS[b.flatmateGender]) u.flatmateGender = b.flatmateGender;
   if (b.lifestyle && typeof b.lifestyle === 'object') {
     for (const [k, v] of Object.entries(b.lifestyle)) {
@@ -74,6 +78,7 @@ router.post('/photos', photoUpload.single('photo'), async (req, res) => {
 
 router.delete('/photos/:index', async (req, res) => {
   const i = Number(req.params.index);
+  if (!Number.isInteger(i) || i < 0) return res.status(404).json({ error: 'Photo not found' });
   const [removed] = req.user.photos.splice(i, 1);
   if (!removed) return res.status(404).json({ error: 'Photo not found' });
   await req.user.save();

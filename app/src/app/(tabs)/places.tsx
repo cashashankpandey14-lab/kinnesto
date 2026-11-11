@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ListingTile, PlaceCard } from '@/components/Cards';
 import { CityPicker } from '@/components/CityPicker';
 import { Deck } from '@/components/Deck';
-import { Chip, Empty, Loading, notify, Segmented } from '@/components/ui';
+import { Button, Chip, Empty, Loading, notify, Segmented } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { shortRupees } from '@/lib/format';
@@ -49,18 +49,25 @@ export default function Places() {
 
   async function swipe(l: Listing, dir: 'like' | 'pass') {
     setItems((list) => list.filter((x) => x.id !== l.id));
+    // A BnB like is a booking request, which needs dates: send them to the listing to pick them.
+    if (dir === 'like' && l.type === 'bnb') {
+      router.push(`/listing/${l.id}`);
+      return;
+    }
     try {
       const res = await api<{ request: { status: string } | null }>(`/listings/${l.id}/swipe`, { method: 'POST', body: { action: dir } });
-      if (dir === 'like' && res.request?.status === 'pending') notify('Request sent 🏠', `We’ve let the host of “${l.title}” know. You’ll get a chat when they accept.`);
+      if (dir === 'like' && res.request?.status === 'pending') notify('Request sent', `We’ve let the host of “${l.title}” know. You’ll get a chat when they accept.`);
     } catch (e: any) {
       notify('Swipe didn’t go through', e.message);
     }
   }
 
   const caps = type === 'bnb' ? NIGHTLY_CAPS : MONTHLY_CAPS;
-  const cols = width >= 1100 ? 4 : width >= 820 ? 3 : width >= 560 ? 2 : 1;
+  // Space next to the desktop sidebar (220px, shown from 1000px wide; see the tabs layout).
+  const avail = Math.min(width >= 1000 ? width - 220 : width, 1200);
+  const cols = avail >= 1000 ? 4 : avail >= 740 ? 3 : avail >= 520 ? 2 : 1;
   // Fixed tile width so a half-full last row lines up with the rows above it.
-  const tileW = (Math.min(width, 1200) - 32 - 14 * (cols - 1)) / cols;
+  const tileW = (avail - 32 - 14 * (cols - 1)) / cols;
 
   return (
     <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: colors.bg }}>
@@ -103,7 +110,7 @@ export default function Places() {
             likeColor={colors.sea}
             onInfo={(l) => router.push(`/listing/${l.id}`)}
             renderCard={(l) => <PlaceCard listing={l} onInfo={() => router.push(`/listing/${l.id}`)} />}
-            empty={<Empty icon="home" title="No more places here" body="Change the filters or city, or switch to Browse to see places you’ve already swiped." />}
+            empty={<Empty icon="home-outline" title="No new places right now" body="Kinnesto is new in Mumbai and places are added every day. Try fewer filters, switch to Browse, or list your own room." action={<Button title="List a place" variant="place" onPress={() => router.push('/edit-listing')} style={{ minWidth: 200 }} />} />}
           />
         ) : loading && !items.length ? (
           <Loading />
@@ -115,7 +122,7 @@ export default function Places() {
             keyExtractor={(l) => l.id}
             contentContainerStyle={{ padding: 16, gap: 14 }}
             columnWrapperStyle={cols > 1 ? { gap: 14 } : undefined}
-            ListEmptyComponent={<Empty icon="search" title="Nothing matches yet" body="Try a higher budget or another type of place." />}
+            ListEmptyComponent={<Empty icon="search" title="Nothing matches yet" body="Kinnesto is new in Mumbai and places are added every day. Try a higher budget or another type, or list your own room." action={<Button title="List a place" variant="place" onPress={() => router.push('/edit-listing')} style={{ minWidth: 200 }} />} />}
             renderItem={({ item, index }) => (
               <View style={{ width: tileW }} key={index}>
                 <ListingTile listing={item} onPress={() => router.push(`/listing/${item.id}`)} />

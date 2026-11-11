@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Image, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { ListingTile } from '@/components/Cards';
+import { ReportSheet } from '@/components/ReportSheet';
 import { Button, Card, Chip, confirm, Loading, notify, SectionTitle, VibePill } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -17,6 +18,7 @@ export default function PersonScreen() {
   const { width } = useWindowDimensions();
   const [person, setPerson] = useState<Person | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [reporting, setReporting] = useState(false);
 
   useEffect(() => {
     api<{ person: Person; listings: Listing[] }>(`/people/${id}`)
@@ -45,10 +47,11 @@ export default function PersonScreen() {
     }
   }
 
-  async function block() {
-    if (!(await confirm(`Block ${person!.name}?`, 'They won’t see you and you won’t see them. Any chat with them will close. We’ll review the report.', 'Block & report'))) return;
+  async function block(reason: string, details: string) {
     try {
-      await api(`/people/${person!.id}/block`, { method: 'POST', body: { reason: 'Reported from profile' } });
+      await api(`/people/${person!.id}/block`, { method: 'POST', body: { reason, details } });
+      setReporting(false);
+      notify('Blocked and reported', `You won’t see ${person!.name} again, and our team will review your report.`);
       router.replace('/roomies');
     } catch (e: any) {
       notify('Couldn’t block', e.message);
@@ -150,13 +153,16 @@ export default function PersonScreen() {
             </>
           )}
 
-          {!isMe && <Button title={`Block & report ${person.name}`} variant="ghost" onPress={block} style={{ marginTop: 24 }} />}
+          {!isMe && <Button title={`Block & report ${person.name}`} variant="ghost" onPress={() => setReporting(true)} style={{ marginTop: 24 }} />}
+          <ReportSheet title={`Block & report ${person.name}`} actionLabel="Block and report" visible={reporting} onClose={() => setReporting(false)} onSubmit={block} />
         </View>
       </ScrollView>
       {!isMe && (
         <View style={styles.bar}>
-          <Button title="Pass" variant="secondary" icon="close" onPress={() => swipe('pass')} style={{ flex: 1 }} />
-          <Button title="Like" icon="heart" onPress={() => swipe('like')} style={{ flex: 1 }} />
+          <View style={{ flexDirection: 'row', gap: 12, width: '100%', maxWidth: 560, alignSelf: 'center' }}>
+            <Button title="Pass" variant="secondary" icon="close" onPress={() => swipe('pass')} style={{ flex: 1 }} />
+            <Button title="Like" icon="heart" onPress={() => swipe('like')} style={{ flex: 1 }} />
+          </View>
         </View>
       )}
     </View>
@@ -172,5 +178,5 @@ const styles = StyleSheet.create({
   life: { flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1.5, borderColor: colors.line, backgroundColor: colors.card, borderRadius: radius.md, paddingHorizontal: 12, paddingVertical: 9, minWidth: '46%', flexGrow: 1 },
   lifeLabel: { fontSize: 11, color: colors.muted, fontWeight: '800', textTransform: 'uppercase' },
   lifeVal: { fontSize: 15, color: colors.ink, fontWeight: '700' },
-  bar: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', gap: 12, padding: 14, paddingBottom: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: colors.line },
+  bar: { position: 'absolute', left: 0, right: 0, bottom: 0, padding: 14, paddingBottom: 20, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: colors.line },
 });

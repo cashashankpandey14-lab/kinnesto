@@ -62,6 +62,7 @@ const listingSchema = new Schema(
     maxGuests: { type: Number, min: 1, max: 30 },
     minNights: { type: Number, min: 1, max: 365 },
     active: { type: Boolean, default: true },
+    adminHidden: { type: Boolean, default: false }, // set by moderators; owners can't relist it
   },
   { timestamps: true }
 );
@@ -102,6 +103,7 @@ const matchSchema = new Schema(
     users: { type: [ref('User')], required: true, index: true },
     listing: ref('Listing'),
     kind: { type: String, enum: ['roomie', 'listing'], default: 'roomie' },
+    key: { type: String, unique: true, sparse: true },
     lastMessage: String,
     lastMessageAt: Date,
     active: { type: Boolean, default: true },

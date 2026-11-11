@@ -37,7 +37,7 @@ router.post('/:id/respond', async (req, res) => {
 
   const text = i.listing.type === 'bnb' ? `Your stay at ${i.listing.title} is confirmed 🎉` : `Hi! I accepted your request for ${i.listing.title}. Let’s chat.`;
   const match = await createMatch(req.user._id, i.user, { kind: 'listing', listing: i.listing._id, opener: { from: req.user._id, text } });
-  res.json({ status: i.status, matchId: String(match._id) });
+  res.json({ status: i.status, matchId: match ? String(match._id) : undefined });
 });
 
 module.exports = router;

@@ -2,7 +2,9 @@ const jwt = require('jsonwebtoken');
 const { config } = require('../config');
 const { User } = require('../models');
 
-const isAdmin = (user) => !!user && config.adminEmails.includes(user.email);
+// Admin needs an allow-listed email *and* proof of owning it: a Google sign-in (Google verifies the address).
+// Seeded demo admins count only in the local demo mode.
+const isAdmin = (user) => !!user && config.adminEmails.includes(user.email) && (!!user.googleId || (user.isDemo && config.demoAutoReply));
 
 function requireAdmin(req, res, next) {
   if (!isAdmin(req.user)) return res.status(403).json({ error: 'Admins only' });

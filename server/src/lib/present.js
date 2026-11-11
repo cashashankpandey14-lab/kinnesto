@@ -1,5 +1,4 @@
 const { lifestyleOf } = require('./compat');
-const { config } = require('../config');
 
 // What the signed-in member sees about themselves.
 function presentMe(u) {
@@ -24,7 +23,7 @@ function presentMe(u) {
     interests: u.interests,
     flatmateGender: u.flatmateGender,
     onboarded: u.onboarded,
-    isAdmin: config.adminEmails.includes(u.email),
+    isAdmin: require('../middleware/auth').isAdmin(u),
   };
 }
 
@@ -75,6 +74,7 @@ function presentListing(l, extra = {}) {
     maxGuests: l.maxGuests ?? null,
     minNights: l.minNights ?? null,
     active: l.active,
+    adminHidden: !!l.adminHidden,
     createdAt: l.createdAt,
     ownerId: String(owner ? owner._id : l.owner),
     owner: owner ? { id: String(owner._id), name: owner.name, photo: owner.photos?.[0] || null, occupation: owner.occupation || '', recentlyActive: Date.now() - new Date(owner.lastActive) < 3 * 86400000 } : null,

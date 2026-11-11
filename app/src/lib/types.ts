@@ -74,6 +74,7 @@ export interface Listing {
   maxGuests: number | null;
   minNights: number | null;
   active: boolean;
+  adminHidden?: boolean;
   createdAt: string;
   ownerId: string;
   owner: { id: string; name: string; photo: string | null; occupation: string; recentlyActive: boolean } | null;

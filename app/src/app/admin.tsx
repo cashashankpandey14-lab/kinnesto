@@ -363,7 +363,7 @@ export default function Admin() {
 const styles = StyleSheet.create({
   h1: { fontSize: 30, fontWeight: '900', color: colors.ink, letterSpacing: -0.8 },
   statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
-  stat: { flexGrow: 1, flexBasis: 220, gap: 4, padding: 18 },
+  stat: { flexGrow: 1, flexBasis: 150, gap: 4, padding: 16 },
   statLabel: { fontSize: 13, fontWeight: '600', color: colors.muted },
   statValue: { fontSize: 30, fontWeight: '900', color: colors.ink, letterSpacing: -0.8, fontVariant: ['tabular-nums'] },
   statSub: { fontSize: 13, color: colors.muted },

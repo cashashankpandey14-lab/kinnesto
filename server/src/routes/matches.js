@@ -1,5 +1,5 @@
 const express = require('express');
-const { Match, Message, User, Listing } = require('../models');
+const { Match, Message, User, Listing, Swipe } = require('../models');
 const { presentUser, presentListing } = require('../lib/present');
 const { emitToUser } = require('../socket');
 const { config } = require('../config');
@@ -65,7 +65,7 @@ router.get('/:id/messages', async (req, res) => {
   const [other, listing, messages] = await Promise.all([
     User.findById(otherId),
     m.listing ? Listing.findById(m.listing) : null,
-    Message.find({ match: m._id }).sort({ createdAt: 1 }).limit(500),
+    Message.find({ match: m._id }).sort({ createdAt: -1 }).limit(500).then((list) => list.reverse()),
   ]);
   const unread = await Message.updateMany({ match: m._id, from: otherId, readAt: null }, { readAt: new Date() });
   if (unread.modifiedCount) emitToUser(otherId, 'read', { matchId: String(m._id) });
@@ -118,6 +118,9 @@ router.delete('/:id', async (req, res) => {
   if (!m) return;
   m.active = false;
   await m.save();
+  // Closing a chat also clears the likes behind it, so it can't quietly re-match.
+  const [a, b] = m.users;
+  await Swipe.deleteMany({ $or: [{ from: a, to: b }, { from: b, to: a }] });
   for (const u of m.users) emitToUser(u, 'unmatch', { matchId: String(m._id) });
   res.json({ ok: true });
 });

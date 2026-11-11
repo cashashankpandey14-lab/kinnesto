@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "export:web": "expo export -p web --output-dir web-build && node scripts/postexport.js"
+    "export:web": "expo export -p web --output-dir web-build --clear && node scripts/postexport.js"
   },
   "dependencies": {
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",

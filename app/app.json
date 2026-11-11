@@ -28,8 +28,8 @@
       "bundler": "metro",
       "output": "single",
       "favicon": "./assets/favicon.png",
-      "name": "Kinnesto: flats, PGs, stays & flatmates",
-      "description": "Swipe on flats, PGs, hostels, co-living and BnBs, and match with flatmates who share your vibe."
+      "name": "Kinnesto: PG, Flats & Flatmates in Mumbai",
+      "description": "Find PGs, flats, hostels, co-living and stays across Mumbai, and match with flatmates on budget, timing and lifestyle. Free, no brokerage."
     },
     "plugins": [
       "expo-router",

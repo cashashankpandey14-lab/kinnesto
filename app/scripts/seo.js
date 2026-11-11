@@ -58,7 +58,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</sc
 <div class="wrap"><nav><a class="logo" href="/"><img src="/icon.png" alt="">kinnesto</a><a class="btn light" href="/auth?mode=login">Sign in</a></nav></div>
 <main class="wrap">${body}</main>
 <footer><div class="wrap">
-<p><strong style="color:var(--ink)">Kinnesto</strong> · flats, PGs, hostels, co-living, stays and flatmates. Live in ${cities.filter((c) => c.live).map((c) => `<a href="/in/${c.slug}">${c.name}</a>`).join(', ')}, more cities soon.</p>
+<p><strong style="color:var(--ink)">Kinnesto</strong> · flats, PGs, hostels, co-living, stays and flatmates. Live in ${cities.filter((c) => c.live).map((c) => `<a style="margin:0" href="/in/${c.slug}">${c.name}</a>`).join(', ')}, more cities soon.</p>
 <p><a href="/about">About</a><a href="/safety">Safety</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/delete-account">Delete account</a></p>
 <p>© ${new Date().getFullYear()} Kinnesto · Made in India</p></div></footer>
 </body></html>`;

@@ -34,13 +34,19 @@ export default function Host() {
   );
   useEffect(() => on('request', load), [on, load]);
 
+  const [responding, setResponding] = useState<string | null>(null);
+
   async function respond(r: RequestItem, accept: boolean) {
+    if (responding) return;
+    setResponding(r.id);
     try {
       const res = await api<{ matchId?: string }>(`/requests/${r.id}/respond`, { method: 'POST', body: { accept } });
       setRequests((list) => list.map((x) => (x.id === r.id ? { ...x, status: accept ? 'accepted' : 'declined' } : x)));
       if (res.matchId) router.push(`/chat/${res.matchId}`);
     } catch (e: any) {
       notify('Couldn’t update request', e.message);
+    } finally {
+      setResponding(null);
     }
   }
 
@@ -71,8 +77,8 @@ export default function Host() {
       {r.note ? <Text style={{ marginTop: 10, color: colors.ink, fontStyle: 'italic' }}>“{r.note}”</Text> : null}
       {r.status === 'pending' ? (
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
-          <Button title="Decline" variant="secondary" small onPress={() => respond(r, false)} style={{ flex: 1 }} />
-          <Button title={r.listing.type === 'bnb' ? 'Confirm stay' : 'Accept & chat'} small onPress={() => respond(r, true)} style={{ flex: 1 }} />
+          <Button title="Decline" variant="secondary" small disabled={responding === r.id} onPress={() => respond(r, false)} style={{ flex: 1 }} />
+          <Button title={r.listing.type === 'bnb' ? 'Confirm stay' : 'Accept & chat'} small loading={responding === r.id} onPress={() => respond(r, true)} style={{ flex: 1 }} />
         </View>
       ) : (
         <Text style={{ marginTop: 10, fontWeight: '800', color: r.status === 'accepted' ? colors.like : colors.muted }}>{r.status === 'accepted' ? '✓ Accepted' : 'Declined'}</Text>

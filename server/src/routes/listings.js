@@ -3,7 +3,8 @@ const O = require('../options');
 const { Listing, Interest, User } = require('../models');
 const { listingFit } = require('../lib/compat');
 const { presentListing } = require('../lib/present');
-const { photoUpload, savePhoto } = require('../lib/upload');
+const { photoUpload, savePhoto, deletePhoto } = require('../lib/upload');
+const { requireOnboarded } = require('../middleware/auth');
 const { createMatch } = require('../lib/matching');
 const { emitToUser } = require('../socket');
 const { config } = require('../config');
@@ -13,12 +14,13 @@ const MAX_PHOTOS = 10;
 const OWNER_FIELDS = 'name photos occupation lastActive lifestyle budgetMin budgetMax intent interests moveIn onboarded gender';
 
 function buildFilter(q, user) {
-  const filter = { active: true };
+  const filter = { active: true, adminHidden: { $ne: true } };
   const types = String(q.type || '').split(',').filter((t) => O.LISTING_TYPES[t]);
   if (types.length) filter.type = { $in: types };
   filter.city = O.CITIES.includes(q.city) ? q.city : user.city || O.LAUNCH_CITIES[0];
-  if (q.maxPrice) filter.price = { ...filter.price, $lte: Number(q.maxPrice) };
-  if (q.minPrice) filter.price = { ...filter.price, $gte: Number(q.minPrice) };
+  const num = (v) => (Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : null);
+  if (num(q.maxPrice) != null) filter.price = { ...filter.price, $lte: num(q.maxPrice) };
+  if (num(q.minPrice) != null) filter.price = { ...filter.price, $gte: num(q.minPrice) };
   if (O.ROOM_TYPES[q.roomType]) filter.roomType = q.roomType;
   // Don't show women-only places to men and vice versa unless they ask for everything.
   const gender = q.gender || user.gender;
@@ -104,12 +106,16 @@ function readListing(b, l = {}) {
   if (b.city !== undefined) out.city = b.city;
   if (b.locality !== undefined) out.locality = s(b.locality, 60);
   for (const k of ['price', 'deposit', 'bedrooms', 'bathrooms', 'currentFlatmates', 'maxGuests', 'minNights']) {
-    if (b[k] !== undefined && b[k] !== '' && b[k] !== null) out[k] = Number(b[k]);
+    if (b[k] !== undefined && b[k] !== '' && b[k] !== null && Number.isFinite(Number(b[k]))) out[k] = Number(b[k]);
   }
   for (const k of ['roomType', 'furnishing', 'genderPref']) if (b[k] !== undefined) out[k] = b[k];
   if (Array.isArray(b.amenities)) out.amenities = b.amenities.filter((a) => O.AMENITIES[a]);
-  if (Array.isArray(b.photos)) out.photos = b.photos.filter((p) => typeof p === 'string' && /^https?:\/\//.test(p)).slice(0, MAX_PHOTOS);
-  if (b.availableFrom !== undefined) out.availableFrom = b.availableFrom ? new Date(b.availableFrom) : null;
+  // Only photos uploaded to Kinnesto (or the demo photo host) are accepted, so listings can't embed tracking images.
+  if (Array.isArray(b.photos)) out.photos = b.photos.filter((p) => typeof p === 'string' && (p.startsWith(`${config.publicUrl}/uploads/`) || p.startsWith('https://images.unsplash.com/'))).slice(0, MAX_PHOTOS);
+  if (b.availableFrom !== undefined) {
+    const d = b.availableFrom ? new Date(b.availableFrom) : null;
+    out.availableFrom = d && !Number.isNaN(+d) ? d : null;
+  }
   if (b.active !== undefined) out.active = Boolean(b.active);
   const type = out.type || l.type;
   if (type === 'bnb') {
@@ -135,13 +141,19 @@ router.post('/', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   const l = await Listing.findOne({ _id: req.params.id, owner: req.user._id }).catch(() => null);
   if (!l) return res.status(404).json({ error: 'Listing not found' });
-  Object.assign(l, readListing(req.body, l));
+  const data = readListing(req.body, l);
+  if (data.city && !O.LAUNCH_CITIES.includes(data.city)) return res.status(400).json({ error: `You can list places in ${O.LAUNCH_CITIES.join(', ')} for now.` });
+  if (data.photos && !data.photos.length) return res.status(400).json({ error: 'Keep at least one photo' });
+  if (data.active && l.adminHidden) return res.status(403).json({ error: 'Kinnesto has hidden this listing for review. Contact hello@kinnesto.com to restore it.' });
+  const removed = data.photos ? l.photos.filter((p) => !data.photos.includes(p)) : [];
+  Object.assign(l, data);
   try {
     await l.save();
   } catch (e) {
     if (e.name === 'ValidationError') return res.status(400).json({ error: `Check ${Object.keys(e.errors).join(', ')}` });
     throw e;
   }
+  removed.forEach((p) => deletePhoto(p).catch(() => {}));
   res.json({ listing: presentListing(l) });
 });
 
@@ -149,11 +161,12 @@ router.delete('/:id', async (req, res) => {
   const l = await Listing.findOneAndDelete({ _id: req.params.id, owner: req.user._id }).catch(() => null);
   if (!l) return res.status(404).json({ error: 'Listing not found' });
   await Interest.deleteMany({ listing: l._id });
+  l.photos.forEach((p) => deletePhoto(p).catch(() => {}));
   res.json({ ok: true });
 });
 
 // Swipe on a place. A like is a request to the host; for a BnB it's a booking request with dates.
-router.post('/:id/swipe', async (req, res) => {
+router.post('/:id/swipe', requireOnboarded, async (req, res) => {
   const l = await Listing.findOne({ _id: req.params.id, active: true }).catch(() => null);
   if (!l) return res.status(404).json({ error: 'Listing not found' });
   if (l.owner.equals(req.user._id)) return res.status(400).json({ error: 'That’s your own listing' });
@@ -161,10 +174,14 @@ router.post('/:id/swipe', async (req, res) => {
 
   const update = { action, owner: l.owner, note: String(req.body.note || '').slice(0, 300) };
   if (action === 'like' && l.type === 'bnb') {
+    // A BnB request is a booking request, so it needs real dates.
     const checkIn = new Date(req.body.checkIn);
     const checkOut = new Date(req.body.checkOut);
-    if (req.body.checkIn || req.body.checkOut) {
+    const today = new Date(new Date().toDateString());
+    {
+      if (!req.body.checkIn || !req.body.checkOut) return res.status(400).json({ error: 'Pick your check-in date and number of nights', code: 'DATES_REQUIRED' });
       if (Number.isNaN(+checkIn) || Number.isNaN(+checkOut) || checkOut <= checkIn) return res.status(400).json({ error: 'Pick a check-out after check-in' });
+      if (checkIn < today) return res.status(400).json({ error: 'Check-in can’t be in the past' });
       const nights = Math.round((checkOut - checkIn) / 86400000);
       if (nights < (l.minNights || 1)) return res.status(400).json({ error: `Minimum stay is ${l.minNights} nights` });
       Object.assign(update, { checkIn, checkOut, guests: Math.min(Number(req.body.guests) || 1, l.maxGuests || 30) });
@@ -185,7 +202,7 @@ router.post('/:id/swipe', async (req, res) => {
     await interest.save();
     const hello = l.type === 'bnb' ? `Hi ${req.user.name}! Your stay is confirmed 🎉 Let me know your arrival time.` : `Hey ${req.user.name}! Thanks for your interest in ${l.title}. When would you like to come see it?`;
     const match = await createMatch(l.owner, req.user._id, { kind: 'listing', listing: l._id, opener: { from: l.owner, text: hello } });
-    return res.json({ request: { status: 'accepted', matchId: String(match._id) } });
+    return res.json({ request: { status: 'accepted', matchId: match ? String(match._id) : undefined } });
   }
   res.json({ request: { status: 'pending' } });
 });

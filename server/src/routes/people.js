@@ -18,6 +18,7 @@ router.get('/deck', async (req, res) => {
     _id: { $nin: [me._id, ...swiped, ...me.blocked] },
     blocked: { $ne: me._id },
     onboarded: true,
+    banned: { $ne: true },
     city,
     flatmateGender: { $in: ['any', me.gender].filter(Boolean) },
   };
@@ -42,8 +43,8 @@ router.get('/deck', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  const p = await User.findOne({ _id: req.params.id, onboarded: true }).catch(() => null);
-  if (!p || p.blocked.some((b) => b.equals(req.user._id))) return res.status(404).json({ error: 'Profile not found' });
+  const p = await User.findOne({ _id: req.params.id, onboarded: true, banned: { $ne: true } }).catch(() => null);
+  if (!p || p.blocked.some((b) => b.equals(req.user._id)) || req.user.blocked.some((b) => b.equals(p._id))) return res.status(404).json({ error: 'Profile not found' });
   const vibe = vibeMatch(req.user, p);
   const listings = await Listing.find({ owner: p._id, active: true });
   res.json({ person: presentUser(p, { vibe: vibe.score, reasons: vibe.reasons }), listings: listings.map((l) => presentListing(l)) });
@@ -52,7 +53,8 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/swipe', async (req, res) => {
   const action = req.body.action === 'like' ? 'like' : 'pass';
   const target = await User.findById(req.params.id).catch(() => null);
-  if (!target || target._id.equals(req.user._id)) return res.status(404).json({ error: 'Profile not found' });
+  const blocked = target && (target.blocked.some((b) => b.equals(req.user._id)) || req.user.blocked.some((b) => b.equals(target._id)));
+  if (!target || target.banned || blocked || !target.onboarded || target._id.equals(req.user._id)) return res.status(404).json({ error: 'Profile not found' });
 
   await Swipe.updateOne({ from: req.user._id, to: target._id }, { action }, { upsert: true });
   if (action !== 'like') return res.json({ match: null });
@@ -66,6 +68,7 @@ router.post('/:id/swipe', async (req, res) => {
   if (!theyLiked) return res.json({ match: null });
 
   const match = await createMatch(req.user._id, target._id, { kind: 'roomie' });
+  if (!match) return res.json({ match: null });
   res.json({ match: { id: String(match._id), user: presentUser(target), vibe: vibeMatch(req.user, target).score } });
 });
 
@@ -76,6 +79,7 @@ router.post('/:id/block', async (req, res) => {
   if (!req.user.blocked.some((b) => b.equals(target._id))) req.user.blocked.push(target._id);
   await req.user.save();
   await Match.updateMany({ users: { $all: [req.user._id, target._id] } }, { active: false });
+  await Swipe.deleteMany({ $or: [{ from: req.user._id, to: target._id }, { from: target._id, to: req.user._id }] });
   if (req.body.reason) await Report.create({ from: req.user._id, user: target._id, reason: String(req.body.reason).slice(0, 100), details: String(req.body.details || '').slice(0, 1000) });
   res.json({ ok: true });
 });
