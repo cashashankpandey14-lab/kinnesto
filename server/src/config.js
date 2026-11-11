@@ -14,8 +14,9 @@ const config = {
   // Members with these emails see the admin dashboard (comma-separated).
   adminEmails: (process.env.ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
   // Social sign-in. Leave unset to hide the buttons.
-  // Only accept a real Google client ID, so a mis-pasted value is never published or used.
-  googleClientId: /^[\w-]+\.apps\.googleusercontent\.com$/.test((process.env.GOOGLE_CLIENT_ID || '').trim()) ? process.env.GOOGLE_CLIENT_ID.trim() : '',
+  // Only accept a real Google client ID (pulled out of quotes or labels if pasted with them),
+  // so a mis-pasted value is never published or used.
+  googleClientId: ((process.env.GOOGLE_CLIENT_ID || '').match(/[\w-]+\.apps\.googleusercontent\.com/) || [''])[0],
   facebookAppId: process.env.FACEBOOK_APP_ID || '',
   facebookAppSecret: process.env.FACEBOOK_APP_SECRET || '',
 };
