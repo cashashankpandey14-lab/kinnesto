@@ -20,7 +20,8 @@ const authLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeade
 
 app.get('/uploads/:filename', (req, res, next) => servePhoto(req, res).catch(next));
 
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+// `version` is the deployed commit on Render, handy for checking a deploy went out.
+app.get('/api/health', (req, res) => res.json({ ok: true, version: (process.env.RENDER_GIT_COMMIT || 'local').slice(0, 7) }));
 app.get('/api/options', (req, res) => {
   res.set('Cache-Control', 'public, max-age=300');
   res.json(require('./options'));

@@ -12,7 +12,14 @@ const google = new OAuth2Client();
 
 // Which social sign-ins are switched on. The IDs are public by design (they ship in the web page).
 router.get('/providers', (req, res) => {
-  res.json({ google: config.googleClientId || null, facebook: config.facebookAppId || null });
+  // *Status says why a provider is off without revealing the configured value.
+  const status = (raw, ok) => (ok ? 'ok' : raw ? 'invalid' : 'missing');
+  res.json({
+    google: config.googleClientId || null,
+    facebook: config.facebookAppId || null,
+    googleStatus: status(process.env.GOOGLE_CLIENT_ID, config.googleClientId),
+    facebookStatus: status(process.env.FACEBOOK_APP_ID, config.facebookAppId && config.facebookAppSecret),
+  });
 });
 
 router.post('/register', async (req, res) => {
