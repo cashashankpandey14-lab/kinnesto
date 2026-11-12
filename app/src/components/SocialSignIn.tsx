@@ -4,6 +4,7 @@ import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { colors, radius } from '@/lib/theme';
+import { NativeGoogleButton } from './NativeGoogleButton';
 import { Text } from './Text';
 
 declare global {
@@ -26,8 +27,8 @@ function loadScript(src: string) {
   });
 }
 
-// "Continue with Google / Facebook" on the website. The server says which providers are configured;
-// buttons stay hidden until their IDs are set. Native apps need the native SDKs (a dev build) first.
+// "Continue with Google / Facebook". The server says which providers are configured; buttons stay hidden
+// until their IDs are set. Web uses the providers' JS SDKs; Android uses native Google sign-in.
 export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError: (msg: string) => void }) {
   const { signInWith } = useAuth();
   const [ids, setIds] = useState<{ google: string | null; facebook: string | null } | null>(null);
@@ -35,12 +36,12 @@ export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError:
   const googleBox = useRef<View>(null);
 
   useEffect(() => {
-    if (Platform.OS !== 'web') return;
+    if (Platform.OS === 'ios') return;
     api<{ google: string | null; facebook: string | null }>('/auth/providers').then(setIds).catch(() => setIds({ google: null, facebook: null }));
   }, []);
 
   useEffect(() => {
-    if (!ids?.google) return;
+    if (!ids?.google || Platform.OS !== 'web') return;
     loadScript('https://accounts.google.com/gsi/client')
       .then(() => {
         window.google.accounts.id.initialize({
@@ -61,7 +62,7 @@ export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError:
   }, [ids?.google, signInWith, onDone, onError]);
 
   useEffect(() => {
-    if (!ids?.facebook) return;
+    if (!ids?.facebook || Platform.OS !== 'web') return;
     window.fbAsyncInit = () => {
       window.FB.init({ appId: ids.facebook, cookie: false, xfbml: false, version: 'v21.0' });
       setFbReady(true);
@@ -85,11 +86,12 @@ export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError:
     );
   }
 
-  if (Platform.OS !== 'web' || !ids || (!ids.google && !ids.facebook)) return null;
+  const web = Platform.OS === 'web';
+  if (!ids || (!ids.google && !(web && ids.facebook))) return null;
   return (
     <View style={{ gap: 12, marginBottom: 6 }}>
-      {ids.google && <View ref={googleBox} style={styles.google} />}
-      {ids.facebook && (
+      {ids.google && (web ? <View ref={googleBox} style={styles.google} /> : <NativeGoogleButton webClientId={ids.google} onDone={onDone} onError={onError} />)}
+      {web && ids.facebook && (
         <Pressable onPress={facebook} disabled={!fbReady} style={({ pressed }) => [styles.fb, pressed && { transform: [{ translateX: 2 }, { translateY: 2 }] }, !fbReady && { opacity: 0.5 }]}>
           <Ionicons name="logo-facebook" size={20} color="#fff" />
           <Text style={styles.fbText}>Continue with Facebook</Text>

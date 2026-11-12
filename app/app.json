@@ -55,7 +55,13 @@
           "microphonePermission": false
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.655256887429-q2sklr7qb83jk3nuqq2r1rm7b37vs8t7"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": false
