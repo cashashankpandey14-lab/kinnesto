@@ -42,6 +42,9 @@ npx eas-cli@latest submit -p android --profile production   # uploads it to the 
 The first upload: EAS asks for a Google Service Account key so it can upload for you. Follow its prompt, or upload
 the first `.aab` by hand in Play Console → **Testing → Internal testing**.
 
+All listing text, the privacy-form answers and Apple review notes are in `docs/store-listing.md`; the graphics
+(512 icon, 1024×500 feature graphic, phone screenshots) are in `marketing/store/play/`.
+
 In Play Console, fill in:
 - **Store listing:** title "Kinnesto: Flats, PGs & Flatmates", short description (80 characters), full description,
   icon (512×512 from `assets/icon.png`), feature graphic (1024×500), and at least 2 phone screenshots.
@@ -63,8 +66,8 @@ npx eas-cli@latest submit -p ios --profile production   # uploads to App Store C
 In App Store Connect (appstoreconnect.apple.com):
 - Create the app record: name **Kinnesto**, bundle ID **app.kinnesto**, SKU `kinnesto`, primary language English (India).
 - **App Privacy:** same data as the Play Data safety form. Privacy policy URL `https://kinnesto.com/privacy`.
-- **Screenshots:** 6.9" iPhone (1320×2868) is required; iPad screenshots too, because `supportsTablet` is on (set it
-  to `false` in `app.json` if you don't want to make iPad screenshots).
+- **Screenshots:** 6.9" iPhone (1320×2868) is the only required size: use `marketing/store/appstore/`. The app is
+  iPhone-only (`supportsTablet: false`), so no iPad screenshots are needed.
 - **Review notes:** give Apple a working demo login (create a real test account on the live site for them), and
   explain that profiles and listings are user-generated with report & block, and that admins review reports.
 - Test with TestFlight first, then **Submit for review**. First reviews take 1–3 days.

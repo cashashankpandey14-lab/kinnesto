@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { FlatList, Image, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { ReportSheet } from '@/components/ReportSheet';
 import { Text, TextInput } from '@/components/Text';
 import { confirm, Loading, notify } from '@/components/ui';
 import { api } from '@/lib/api';
@@ -21,6 +22,7 @@ export default function Chat() {
   const { user, options, on } = useAuth();
   const [data, setData] = useState<ChatData | null>(null);
   const [text, setText] = useState('');
+  const [reporting, setReporting] = useState(false);
   const list = useRef<FlatList<Message>>(null);
 
   useEffect(() => {
@@ -76,6 +78,17 @@ export default function Chat() {
     router.back();
   }
 
+  async function block(reason: string, details: string) {
+    try {
+      await api(`/people/${other!.id}/block`, { method: 'POST', body: { reason, details } });
+      setReporting(false);
+      notify('Blocked and reported', `You won’t hear from ${other!.name} again, and our team will review your report.`);
+      router.replace('/chats');
+    } catch (e: any) {
+      notify('Couldn’t block', e.message);
+    }
+  }
+
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.bg }} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={90}>
       <Stack.Screen
@@ -87,9 +100,16 @@ export default function Chat() {
             </Pressable>
           ),
           headerRight: () => (
-            <Pressable onPress={unmatch} hitSlop={10} accessibilityLabel="Close chat" style={{ paddingHorizontal: 8 }}>
-              <Ionicons name="ellipsis-horizontal" size={22} color={colors.ink} />
-            </Pressable>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {other && (
+                <Pressable onPress={() => setReporting(true)} hitSlop={10} accessibilityLabel={`Block and report ${other.name}`} style={{ paddingHorizontal: 8 }}>
+                  <Ionicons name="flag-outline" size={20} color={colors.ink} />
+                </Pressable>
+              )}
+              <Pressable onPress={unmatch} hitSlop={10} accessibilityLabel="Close chat" style={{ paddingHorizontal: 8 }}>
+                <Ionicons name="ellipsis-horizontal" size={22} color={colors.ink} />
+              </Pressable>
+            </View>
           ),
         }}
       />
@@ -146,6 +166,7 @@ export default function Chat() {
           </Pressable>
         </View>
       </View>
+      {other && <ReportSheet title={`Block & report ${other.name}`} actionLabel="Block and report" visible={reporting} onClose={() => setReporting(false)} onSubmit={block} />}
     </KeyboardAvoidingView>
   );
 }

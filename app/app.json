@@ -8,10 +8,11 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "app.kinnesto",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Kinnesto needs your photos so you can add them to your profile and listings."
+        "NSPhotoLibraryUsageDescription": "Kinnesto needs your photos so you can add them to your profile and listings.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -22,7 +23,10 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -46,7 +50,9 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Kinnesto needs your photos so you can add them to your profile and listings."
+          "photosPermission": "Kinnesto needs your photos so you can add them to your profile and listings.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ],
       "expo-font"
