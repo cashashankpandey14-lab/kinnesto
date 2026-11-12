@@ -1,0 +1,368 @@
+<title>Kinnesto Mumbai Ad Pack</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: one reading column for copy, wide galleries for creatives; ink & marigold from the Kinnesto brand */
+:root {
+  --bg: #F6F5F2; --surface: #FFFFFF; --ink: #121119; --muted: #6C6878; --line: #E5E2DC;
+  --gold: #F4A51C; --goldtext: #9A5C00; --sea: #11615F; --chip: #EFEDE8;
+  --display: 'Sora', 'Segoe UI', system-ui, sans-serif;
+  --body: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #121119; --surface: #1D1B27; --ink: #F3F1F7; --muted: #A9A5B8; --line: #2E2B3B;
+  --gold: #F4A51C; --goldtext: #F4B648; --sea: #5CC4BF; --chip: #262333; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #121119; --surface: #1D1B27; --ink: #F3F1F7; --muted: #A9A5B8; --line: #2E2B3B;
+  --gold: #F4A51C; --goldtext: #F4B648; --sea: #5CC4BF; --chip: #262333; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 80px }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 64px }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.02em; text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.08 }
+h2 { font-size: clamp(24px, 3vw, 32px) }
+h3 { font-size: 18px; font-weight: 600 }
+p { margin: 0 }
+.lead { color: var(--muted); max-width: 62ch; font-size: 18px }
+.eyebrow { font: 700 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--goldtext) }
+header { display: grid; gap: 18px }
+.links { display: flex; flex-wrap: wrap; gap: 10px }
+.links a { color: var(--ink); text-decoration: none; border: 1px solid var(--line); background: var(--surface); padding: 9px 16px; border-radius: 999px; font-weight: 700; font-size: 14px }
+.links a:hover, .links a:focus-visible { border-color: var(--gold); outline: none }
+.links a.primary { background: var(--gold); color: #121119; border-color: var(--gold) }
+section { display: grid; gap: 22px }
+.sechead { display: grid; gap: 8px; max-width: 70ch }
+.sechead p { color: var(--muted) }
+.gallery { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(var(--min, 220px), 1fr)); align-items: start }
+figure { margin: 0; display: grid; gap: 8px; min-width: 0 }
+figure img, figure video { width: 100%; max-width: 100%; display: block; border-radius: 14px; border: 1px solid var(--line); background: var(--chip) }
+figcaption { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap }
+figcaption b { color: var(--ink); font-weight: 700 }
+.spec { font-variant-numeric: tabular-nums }
+.copy { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 16px; min-width: 0 }
+.copy-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) }
+.field { display: grid; gap: 6px }
+.field .label { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+.field .label span { font: 700 11px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted) }
+.text { background: var(--chip); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere }
+button.cp { font: 700 12px var(--body); color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 11px; cursor: pointer }
+button.cp:hover, button.cp:focus-visible { border-color: var(--gold); outline: none }
+ol.rsa { margin: 0; padding-left: 22px; display: grid; gap: 4px; font-variant-numeric: tabular-nums }
+ol.rsa li span { color: var(--muted); font-size: 12px; margin-left: 6px }
+.tags { display: flex; flex-wrap: wrap; gap: 6px }
+.tags span { background: var(--chip); border-radius: 999px; padding: 4px 10px; font-size: 13px }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface) }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top }
+th { font: 700 11px var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted) }
+tr:last-child td { border-bottom: 0 }
+td.day { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums }
+.pill { display: inline-block; font: 700 11px/1 var(--body); padding: 5px 9px; border-radius: 999px; background: var(--chip); color: var(--ink); white-space: nowrap }
+.pill.paid { background: var(--gold); color: #121119 }
+.checklist { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none }
+.checklist li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start }
+.checklist li::before { content: ""; width: 18px; height: 18px; margin-top: 4px; border: 2px solid var(--gold); border-radius: 5px }
+.note { color: var(--muted); font-size: 14px }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Mumbai launch · paid and organic</span>
+    <h1>Kinnesto ad pack</h1>
+    <p class="lead">Every creative and every line of copy for Instagram, Facebook and Google, sized to each platform's spec. Nothing has been posted or launched. Upload these when you're ready.</p>
+    <div class="links">
+      <a class="primary" href="https://claude.ai/artifact/VtzNxmoqfkEiJAo1fvbekb" target="_blank" rel="noopener">Motion reel (export MP4)</a>
+      <a href="https://claude.ai/artifact/DaCUnLtmvUuzMZzA27fwV7" target="_blank" rel="noopener">Campaign strategy kit</a>
+      <a href="https://kinnesto.com/in/mumbai" target="_blank" rel="noopener">Landing page: kinnesto.com/in/mumbai</a>
+    </div>
+  </header>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Video</span>
+      <h2>Reels and video ads</h2>
+      <p>Live-action spots edited from the AI clips, plus the branded motion reel. The vertical reel works for Reels, Stories and YouTube Shorts. The landscape spot is for YouTube, the Facebook feed and Google video.</p>
+    </div>
+    <div class="gallery" style="--min: 260px">
+      <figure><video src="reels/reel-live-action-15s.mp4" controls playsinline preload="metadata" muted></video>
+        <figcaption><b>Live-action reel</b><span class="spec">1080×1920 · 15 s</span></figcaption></figure>
+      <figure style="grid-column: span 2; min-width: 0"><video src="reels/spot-landscape-9s.mp4" controls playsinline preload="metadata" muted></video>
+        <figcaption><b>Sea Link spot</b><span class="spec">1920×1080 · 9 s</span></figcaption></figure>
+    </div>
+    <p class="note">The AI clips have no music. Add a trending track from the Instagram audio library when posting, because ads that use licensed library audio perform better than silent ones. The motion reel has its own original score.</p>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Meta · Stories and Reels placements</span>
+      <h2>Story ads</h2>
+      <p>The top 250 px and bottom 340 px are kept clear for the Instagram and Facebook interface.</p>
+    </div>
+    <div class="gallery" style="--min: 200px">
+      <figure><img src="ads/story-01-flat-hunting-1080x1920.jpg" alt="Story ad: woman on a Mumbai platform, Flat hunting in Mumbai? Swipe. Match. Move in." loading="lazy"><figcaption><b>Renters · hook</b><span class="spec">1080×1920</span></figcaption></figure>
+      <figure><img src="ads/story-02-flatmate-match-1080x1920.jpg" alt="Story ad: 91% match card, Your next flatmate shouldn't be a gamble." loading="lazy"><figcaption><b>Renters · match</b><span class="spec">1080×1920</span></figcaption></figure>
+      <figure><img src="ads/story-03-hosts-1080x1920.jpg" alt="Story ad: couple moving a box, Got a spare room in Mumbai?" loading="lazy"><figcaption><b>Hosts</b><span class="spec">1080×1920</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Meta · feed</span>
+      <h2>Carousel and feed posts</h2>
+      <p>The carousel tells the product story in order (swipe, match, chat), so upload the slides in this order. The 4:5 posts work as single-image ads and as organic posts.</p>
+    </div>
+    <div class="gallery" style="--min: 180px">
+      <figure><img src="ads/carousel-1-hook-1080.jpg" alt="Carousel slide 1: Finding a home in Mumbai, minus the chaos." loading="lazy"><figcaption><b>1 · Hook</b><span class="spec">1080×1080</span></figcaption></figure>
+      <figure><img src="ads/carousel-2-swipe-1080.jpg" alt="Carousel slide 2: Swipe rooms, Bandra West listing" loading="lazy"><figcaption><b>2 · Swipe rooms</b><span class="spec">1080×1080</span></figcaption></figure>
+      <figure><img src="ads/carousel-3-match-1080.jpg" alt="Carousel slide 3: Match flatmates, 91% card" loading="lazy"><figcaption><b>3 · Match</b><span class="spec">1080×1080</span></figcaption></figure>
+      <figure><img src="ads/carousel-4-chat-1080.jpg" alt="Carousel slide 4: Chat with an owner, visit booked" loading="lazy"><figcaption><b>4 · Chat</b><span class="spec">1080×1080</span></figcaption></figure>
+      <figure><img src="ads/carousel-5-cta-1080.jpg" alt="Carousel slide 5: kinnesto, now live in Mumbai" loading="lazy"><figcaption><b>5 · Sign-up</b><span class="spec">1080×1080</span></figcaption></figure>
+    </div>
+    <div class="gallery" style="--min: 200px">
+      <figure><img src="creatives/01-flatmate-match.png" alt="Feed post: Your next flatmate shouldn't be a gamble" loading="lazy"><figcaption><b>Flatmate match</b><span class="spec">1080×1350</span></figcaption></figure>
+      <figure><img src="creatives/02-no-brokers.png" alt="Feed post: No brokers. No spam calls." loading="lazy"><figcaption><b>No brokers</b><span class="spec">1080×1350</span></figcaption></figure>
+      <figure><img src="creatives/03-room-bandra.png" alt="Feed post: Sunny room in Bandra West" loading="lazy"><figcaption><b>Bandra room</b><span class="spec">1080×1350</span></figcaption></figure>
+      <figure><img src="creatives/04-spare-room-hosts.png" alt="Feed post: Got a spare room in Mumbai?" loading="lazy"><figcaption><b>Hosts</b><span class="spec">1080×1350</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Google · Display, Performance Max, Demand Gen</span>
+      <h2>Google images and logos</h2>
+      <p>Google favours images with little or no text, so there are clean versions for Performance Max as well as text versions for Display. The 1200×628 text image also works as the Facebook link-ad image.</p>
+    </div>
+    <div class="gallery" style="--min: 300px">
+      <figure><img src="ads/display-landscape-1200x628.jpg" alt="Landscape display ad: Find your place in Mumbai, Sea Link at dusk" loading="lazy"><figcaption><b>Display · landscape</b><span class="spec">1200×628 (1.91:1)</span></figcaption></figure>
+      <figure><img src="ads/pmax-landscape-clean-1200x628.jpg" alt="Clean landscape image of the Bandra-Worli Sea Link" loading="lazy"><figcaption><b>PMax · landscape, clean</b><span class="spec">1200×628</span></figcaption></figure>
+    </div>
+    <div class="gallery" style="--min: 200px">
+      <figure><img src="ads/display-square-1200x1200.jpg" alt="Square display ad: No brokers. Just your people." loading="lazy"><figcaption><b>Display · square</b><span class="spec">1200×1200</span></figcaption></figure>
+      <figure><img src="ads/pmax-square-clean-1200x1200.jpg" alt="Clean square image of a couple moving in" loading="lazy"><figcaption><b>PMax · square, clean</b><span class="spec">1200×1200</span></figcaption></figure>
+      <figure><img src="ads/pmax-portrait-clean-960x1200.jpg" alt="Clean portrait image of a woman checking her phone on a platform" loading="lazy"><figcaption><b>PMax · portrait, clean</b><span class="spec">960×1200 (4:5)</span></figcaption></figure>
+      <figure><img src="ads/logo-square-1200.png" alt="Kinnesto square logo" loading="lazy"><figcaption><b>Logo · square</b><span class="spec">1200×1200</span></figcaption></figure>
+    </div>
+    <div class="gallery" style="--min: 300px">
+      <figure><img src="ads/logo-wide-1200x300.png" alt="Kinnesto wide logo" loading="lazy" style="background:#fff"><figcaption><b>Logo · wide (transparent, dark text)</b><span class="spec">1200×300 (4:1)</span></figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Copy · Meta Ads Manager</span>
+      <h2>Facebook and Instagram ad sets</h2>
+      <p>Two campaigns: renters (most of the budget) and hosts (to keep supply up). Paste each field into the matching box in Ads Manager. Meta rotates the variants and keeps the best ones.</p>
+    </div>
+    <div class="copy-grid">
+      <div class="copy">
+        <h3>Renters · Reels, Stories, feed</h3>
+        <div class="field"><div class="label"><span>Primary text 1</span><button class="cp">Copy</button></div><div class="text">Flat hunting in Mumbai shouldn't take your whole month. Kinnesto matches you with rooms, PGs and flatmates who fit how you live: sleep, food, budget, guests. Chat directly with owners. Zero brokerage.</div></div>
+        <div class="field"><div class="label"><span>Primary text 2</span><button class="cp">Copy</button></div><div class="text">Your next flatmate shouldn't be a gamble. See your match score before you ever meet, then swipe right on rooms in Andheri, Powai, Bandra and across Mumbai. Free to join.</div></div>
+        <div class="field"><div class="label"><span>Primary text 3</span><button class="cp">Copy</button></div><div class="text">No brokers. No spam calls. Just rooms you'll love and people you'll get along with. Kinnesto is now live in Mumbai.</div></div>
+        <div class="field"><div class="label"><span>Headlines</span><button class="cp">Copy</button></div><div class="text">Find your place in Mumbai
+Swipe. Match. Move in.
+Rooms and flatmates, no brokerage</div></div>
+        <div class="field"><div class="label"><span>Description</span><button class="cp">Copy</button></div><div class="text">Free to join · Live in Mumbai</div></div>
+        <div class="field"><div class="label"><span>CTA button and link</span><button class="cp">Copy</button></div><div class="text">Sign up
+https://kinnesto.com/in/mumbai?utm_source=meta&utm_medium=paid_social&utm_campaign=mumbai_launch_renters</div></div>
+      </div>
+      <div class="copy">
+        <h3>Hosts · feed and Stories</h3>
+        <div class="field"><div class="label"><span>Primary text 1</span><button class="cp">Copy</button></div><div class="text">Got a spare room in Mumbai? List it on Kinnesto in two minutes, free. Every request arrives with a profile and a match score, so you choose who moves in.</div></div>
+        <div class="field"><div class="label"><span>Primary text 2</span><button class="cp">Copy</button></div><div class="text">Owners, PGs and co-living spaces: reach people who are actually looking, without paying a broker. Chat, accept and confirm in the app.</div></div>
+        <div class="field"><div class="label"><span>Headlines</span><button class="cp">Copy</button></div><div class="text">List your room for free
+Choose who moves in
+Fill your PG without brokers</div></div>
+        <div class="field"><div class="label"><span>CTA button and link</span><button class="cp">Copy</button></div><div class="text">Sign up
+https://kinnesto.com/in/mumbai?utm_source=meta&utm_medium=paid_social&utm_campaign=mumbai_launch_hosts</div></div>
+        <div class="field"><div class="label"><span>Carousel card headlines</span><button class="cp">Copy</button></div><div class="text">1 Home in Mumbai, minus the chaos
+2 Swipe rooms across Mumbai
+3 Match flatmates on lifestyle
+4 Chat directly. No brokers.
+5 Free to join</div></div>
+      </div>
+    </div>
+    <div class="copy">
+      <h3>Suggested targeting</h3>
+      <p><b>Renters:</b> Mumbai plus 25 km (include Thane and Navi Mumbai), ages 19–34, Advantage+ audience with interest hints such as renting, PG, relocation, MBA and engineering colleges, first jobs. <b>Hosts:</b> same area, ages 28–60, interest hints such as real estate, property and landlords. Start with a small daily test budget per ad set, run it for 5–7 days, then move spend to the best creative.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Copy · Google Ads</span>
+      <h2>Search and Performance Max</h2>
+      <p>Every line is checked against Google's limits: 30 characters for headlines, 90 for descriptions and long headlines.</p>
+    </div>
+    <div class="copy-grid">
+      <div class="copy">
+        <h3>Search ad (responsive) · 15 headlines</h3>
+        <ol class="rsa">
+          <li>Flats &amp; PGs in Mumbai<span>21</span></li>
+          <li>Find a Flatmate in Mumbai<span>25</span></li>
+          <li>No Brokerage Rooms in Mumbai<span>28</span></li>
+          <li>Swipe. Match. Move In.<span>22</span></li>
+          <li>Kinnesto: Rooms &amp; Flatmates<span>27</span></li>
+          <li>PG in Andheri, Powai, Bandra<span>28</span></li>
+          <li>Chat Directly With Owners<span>25</span></li>
+          <li>Free to Join<span>12</span></li>
+          <li>Flatmates Matched on Lifestyle<span>30</span></li>
+          <li>Co-living &amp; Hostels in Mumbai<span>29</span></li>
+          <li>List Your Room for Free<span>23</span></li>
+          <li>No Broker Calls, No Spam<span>24</span></li>
+          <li>Room for Rent in Mumbai<span>23</span></li>
+          <li>Find Your Place in Mumbai<span>25</span></li>
+          <li>See Your Match Score First<span>26</span></li>
+        </ol>
+        <div class="field"><div class="label"><span>All headlines</span><button class="cp" data-src="h">Copy</button></div></div>
+      </div>
+      <div class="copy">
+        <h3>Search ad · 4 descriptions</h3>
+        <div class="field"><div class="label"><span>Descriptions</span><button class="cp">Copy</button></div><div class="text">Rooms, PGs, hostels and co-living in Mumbai. Chat with owners directly. Zero brokerage.
+Swipe on rooms you like and get matched with flatmates on sleep, food, budget and habits.
+Have a spare room? List it free in two minutes and choose who moves in.
+Join free at kinnesto.com and find your place, and your people, this month.</div></div>
+        <div class="field"><div class="label"><span>Final URL</span><button class="cp">Copy</button></div><div class="text">https://kinnesto.com/in/mumbai</div></div>
+        <div class="field"><div class="label"><span>Keywords (phrase match)</span><button class="cp">Copy</button></div><div class="text">"flatmate in mumbai"
+"roommate in mumbai"
+"pg in mumbai"
+"pg in andheri"
+"pg in powai"
+"room for rent in mumbai"
+"flat sharing mumbai"
+"no brokerage flat mumbai"
+"co living mumbai"
+"paying guest mumbai"</div></div>
+        <div class="field"><div class="label"><span>Negative keywords</span><button class="cp">Copy</button></div><div class="text">buy
+sale
+resale
+commercial
+office
+shop
+jobs
+hotel</div></div>
+      </div>
+      <div class="copy">
+        <h3>Performance Max asset group</h3>
+        <div class="field"><div class="label"><span>Headlines (30)</span><button class="cp">Copy</button></div><div class="text">Rooms &amp; Flatmates in Mumbai
+Swipe. Match. Move In.
+No Brokerage. Free to Join
+Flatmates Matched on Lifestyle
+List Your Room for Free</div></div>
+        <div class="field"><div class="label"><span>Long headlines (90)</span><button class="cp">Copy</button></div><div class="text">Find rooms, PGs and flatmates in Mumbai, matched on how you live
+No brokers, no spam calls. Swipe, match and chat directly with owners
+Got a spare room in Mumbai? List it free and choose who moves in</div></div>
+        <div class="field"><div class="label"><span>Descriptions (90)</span><button class="cp">Copy</button></div><div class="text">Rooms, PGs, hostels and co-living in Mumbai. Chat with owners directly. Zero brokerage.
+Swipe on rooms you like and get matched with flatmates on sleep, food, budget and habits.</div></div>
+        <div class="field"><div class="label"><span>Business name · CTA</span><button class="cp">Copy</button></div><div class="text">Kinnesto · Sign up</div></div>
+        <p class="note">Images: both clean PMax images, the portrait, both logos. Video: the landscape spot and the vertical reel (upload them to YouTube as unlisted first).</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Organic</span>
+      <h2>Post captions</h2>
+      <p>For the Kinnesto Instagram and Facebook pages. Keep hashtags to 5–8 per post. Instagram now ranks on caption keywords more than on hashtags.</p>
+    </div>
+    <div class="copy-grid">
+      <div class="copy">
+        <h3>Live-action reel</h3>
+        <div class="field"><div class="label"><span>Caption</span><button class="cp">Copy</button></div><div class="text">POV: you've seen 11 flats this week and every broker wants a month's rent 🫠
+
+Kinnesto is how Mumbai finds rooms and flatmates now. Swipe on places, match on lifestyle, chat directly with owners. Zero brokerage.
+
+Now live in Mumbai. Link in bio.
+
+#mumbairentals #flatmatesmumbai #pginmumbai #mumbailife #roommatewanted #nobrokerage #movingtomumbai</div></div>
+      </div>
+      <div class="copy">
+        <h3>Flatmate match carousel</h3>
+        <div class="field"><div class="label"><span>Caption</span><button class="cp">Copy</button></div><div class="text">Your next flatmate shouldn't be a gamble.
+
+Kinnesto matches you on the things that actually cause flatmate fights: sleep schedule, food habits, budget, cleanliness and guests. You see the score before you ever meet.
+
+Swipe through to see how it works →
+
+#flatmatesmumbai #roommatewanted #mumbaiflats #flatshare #mumbailife #kinnesto</div></div>
+      </div>
+      <div class="copy">
+        <h3>Hosts post</h3>
+        <div class="field"><div class="label"><span>Caption</span><button class="cp">Copy</button></div><div class="text">Got a spare room in Mumbai? 🏠
+
+List it on Kinnesto in two minutes, free. Every request comes with a profile and a match score, so you decide who moves in. No brokers, no endless calls.
+
+Start at kinnesto.com (link in bio).
+
+#roomforrentmumbai #pgowners #mumbaiproperty #flatmateswanted #mumbairentals #nobrokerage</div></div>
+      </div>
+      <div class="copy">
+        <h3>Sea Link spot</h3>
+        <div class="field"><div class="label"><span>Caption</span><button class="cp">Copy</button></div><div class="text">Find your place in Mumbai. And the people to share it with. 🌆
+
+Flats, PGs, co-living and flatmates, all in one app. Live now.
+
+#mumbai #mumbaidiaries #bandraworlisealink #mumbairentals #flatmatesmumbai #kinnesto</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Plan</span>
+      <h2>First two weeks</h2>
+      <p>Organic posts build the page before ads send people to it. Paid campaigns start on day 3, once the profile has a few posts.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Day</th><th>Instagram and Facebook</th><th>Google</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td class="day">Day 1</td><td>Post the motion reel and the "No brokers" feed post. Set the bio link to kinnesto.com/in/mumbai.</td><td>Verify the site in Search Console and submit the sitemap.</td><td><span class="pill">Organic</span></td></tr>
+          <tr><td class="day">Day 2</td><td>Post the flatmate match carousel. Story: poll asking "Worst flat-hunting moment?"</td><td>Upload both videos to YouTube as unlisted.</td><td><span class="pill">Organic</span></td></tr>
+          <tr><td class="day">Day 3</td><td>Launch the renters campaign with the live-action reel, 3 Stories and the carousel.</td><td>Launch Search with the 10 keywords above.</td><td><span class="pill paid">Paid</span></td></tr>
+          <tr><td class="day">Day 4</td><td>Post the live-action reel organically with a trending audio track.</td><td>None</td><td><span class="pill">Organic</span></td></tr>
+          <tr><td class="day">Day 5</td><td>Launch the hosts campaign (hosts Story and the spare-room post).</td><td>Add sitelinks and callouts ("Free to join", "No brokerage").</td><td><span class="pill paid">Paid</span></td></tr>
+          <tr><td class="day">Day 7</td><td>Post the Bandra room. Check the first results and pause creatives with click-through below 0.5%.</td><td>Check search terms and add any new negative keywords.</td><td><span class="pill">Review</span></td></tr>
+          <tr><td class="day">Day 8</td><td>Post the Sea Link spot.</td><td>Launch Performance Max with the asset group above.</td><td><span class="pill paid">Paid</span></td></tr>
+          <tr><td class="day">Day 10</td><td>Post the hosts post. Repost signed-up users' first matches if they agree to it.</td><td>None</td><td><span class="pill">Organic</span></td></tr>
+          <tr><td class="day">Day 14</td><td>Move budget to the top two creatives. Brief the next round from the best hook.</td><td>Move budget between Search and PMax by cost per sign-up.</td><td><span class="pill">Review</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="eyebrow">Your side</span>
+      <h2>What needs your accounts</h2>
+      <p>I don't post, publish or spend money without your go-ahead. These steps need your logins.</p>
+    </div>
+    <ul class="checklist">
+      <li><span>Create the Kinnesto Facebook Page and an Instagram business account, then link them in Meta Business Suite.</span></li>
+      <li><span>Open Meta Ads Manager, add a payment method and set up the Meta Pixel for kinnesto.com (I can add the pixel code to the site once you send the Pixel ID).</span></li>
+      <li><span>Create a Google Ads account and link Google Analytics, so sign-ups count as conversions.</span></li>
+      <li><span>Pick daily budgets for each campaign. Tell me the numbers and I'll set the split.</span></li>
+      <li><span>Tell me when the Play Store and App Store apps are live, so the ads can add app-install links.</span></li>
+    </ul>
+  </section>
+</div>
+
+<script>
+document.querySelectorAll('button.cp').forEach((b) => {
+  b.addEventListener('click', () => {
+    let el;
+    if (b.dataset.src === 'h') el = b.closest('.copy').querySelector('ol.rsa');
+    else el = b.closest('.field').querySelector('.text');
+    const text = b.dataset.src === 'h'
+      ? [...el.querySelectorAll('li')].map((li) => li.firstChild.textContent).join('\n')
+      : el.innerText;
+    const done = () => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy'; }, 1400); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected'; setTimeout(() => { b.textContent = 'Copy'; }, 1400); };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+});
+</script>
