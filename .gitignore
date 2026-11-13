@@ -8,3 +8,4 @@ server/uploads/
 .vercel/
 *.log
 marketing/reels/_build/
+release/

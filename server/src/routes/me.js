@@ -2,7 +2,7 @@ const express = require('express');
 const O = require('../options');
 const { deleteUserData } = require('../lib/accounts');
 const { presentMe } = require('../lib/present');
-const { photoUpload, savePhoto, deletePhoto } = require('../lib/upload');
+const { photoUpload, requireImage, savePhoto, deletePhoto } = require('../lib/upload');
 
 const router = express.Router();
 const MAX_PHOTOS = 6;
@@ -66,12 +66,11 @@ router.patch('/', async (req, res) => {
   res.json({ user: presentMe(u) });
 });
 
-router.post('/photos', photoUpload.single('photo'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Choose a JPG, PNG or WebP image' });
+router.post('/photos', photoUpload.single('photo'), requireImage, async (req, res) => {
   if (req.user.photos.length >= MAX_PHOTOS) {
     return res.status(400).json({ error: `You can add up to ${MAX_PHOTOS} photos` });
   }
-  req.user.photos.push(await savePhoto(req.file, req.user._id));
+  req.user.photos.push(await savePhoto(req.file, req.user._id, req.image));
   await req.user.save();
   res.json({ user: presentMe(req.user) });
 });

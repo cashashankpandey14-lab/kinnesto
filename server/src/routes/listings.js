@@ -3,7 +3,7 @@ const O = require('../options');
 const { Listing, Interest, User } = require('../models');
 const { listingFit } = require('../lib/compat');
 const { presentListing } = require('../lib/present');
-const { photoUpload, savePhoto, deletePhoto } = require('../lib/upload');
+const { photoUpload, requireImage, savePhoto, deletePhoto } = require('../lib/upload');
 const { requireOnboarded } = require('../middleware/auth');
 const { createMatch } = require('../lib/matching');
 const { emitToUser } = require('../socket');
@@ -83,9 +83,8 @@ router.get('/saved', async (req, res) => {
   });
 });
 
-router.post('/photos', photoUpload.single('photo'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Choose a JPG, PNG or WebP image' });
-  res.json({ url: await savePhoto(req.file, req.user._id) });
+router.post('/photos', photoUpload.single('photo'), requireImage, async (req, res) => {
+  res.json({ url: await savePhoto(req.file, req.user._id, req.image) });
 });
 
 router.get('/:id', async (req, res) => {
