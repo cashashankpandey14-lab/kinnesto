@@ -37,6 +37,7 @@ app.use(['/api/me/photos', '/api/listings/photos'], (req, res, next) => (req.met
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/me', requireAuth, require('./routes/me'));
 app.use('/api/listings', requireAuth, require('./routes/listings'));
+app.use('/api/notifications', requireAuth, require('./routes/notifications'));
 app.use('/api/reports', requireAuth, require('./routes/reports'));
 app.use('/api/people', requireAuth, requireOnboarded, require('./routes/people'));
 app.use('/api/requests', requireAuth, require('./routes/requests'));

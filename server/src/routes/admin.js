@@ -1,8 +1,10 @@
 const express = require('express');
-const { User, Listing, Interest, Match, Message, Report } = require('../models');
-const { presentListing } = require('../lib/present');
+const { User, Listing, Interest, Match, Message, Report, Notification } = require('../models');
+const { presentListing, presentMe } = require('../lib/present');
+const { applyProfile, missingFields } = require('../lib/profile');
 const { deleteUserData } = require('../lib/accounts');
-const { disconnectUser } = require('../socket');
+const { disconnectUser, emitToAll } = require('../socket');
+const { present: presentNotification } = require('./notifications');
 const { deletePhoto } = require('../lib/upload');
 
 const router = express.Router();
@@ -89,6 +91,24 @@ router.post('/users/:id/ban', async (req, res) => {
   res.json({ user: userRow(u) });
 });
 
+// The full profile behind a member row, so the admin screen can edit every field.
+router.get('/users/:id', async (req, res) => {
+  const u = await User.findById(req.params.id).catch(() => null);
+  if (!u) return res.status(404).json({ error: 'User not found' });
+  res.json({ user: presentMe(u), missing: missingFields(u) });
+});
+
+// Fill in or correct anyone's profile. Unlike a member editing themselves, an admin can mark a
+// profile complete while details are still missing, so support can unblock someone by hand.
+router.patch('/users/:id', async (req, res) => {
+  const u = await User.findById(req.params.id).catch(() => null);
+  if (!u) return res.status(404).json({ error: 'User not found' });
+  const error = applyProfile(u, req.body, { asAdmin: true });
+  if (error) return res.status(400).json({ error });
+  await u.save();
+  res.json({ user: presentMe(u), missing: missingFields(u) });
+});
+
 router.delete('/users/:id', async (req, res) => {
   const u = await User.findById(req.params.id).catch(() => null);
   if (!u) return res.status(404).json({ error: 'User not found' });
@@ -145,6 +165,30 @@ router.post('/reports/:id/resolve', async (req, res) => {
   const r = await Report.findByIdAndUpdate(req.params.id, { status: req.body.reopen ? 'open' : 'resolved' }, { new: true }).catch(() => null);
   if (!r) return res.status(404).json({ error: 'Report not found' });
   res.json({ ok: true, status: r.status });
+});
+
+router.get('/notifications', async (req, res) => {
+  const items = await Notification.find().sort({ createdAt: -1 }).limit(PER).populate('sentBy', 'name email');
+  res.json({
+    notifications: items.map((n) => ({ ...presentNotification(n), sentBy: n.sentBy?.name || n.sentBy?.email || null })),
+    recipients: await User.countDocuments({ banned: false }),
+  });
+});
+
+// Sends an announcement to every member. People who are online see it straight away; everyone
+// else finds it in their notifications list next time they open the app.
+router.post('/notifications', async (req, res) => {
+  const title = String(req.body.title || '').trim().slice(0, 80);
+  if (!title) return res.status(400).json({ error: 'Give the notification a title' });
+  const n = await Notification.create({ title, body: String(req.body.body || '').trim().slice(0, 500), sentBy: req.user._id });
+  emitToAll('notification', presentNotification(n));
+  res.status(201).json({ notification: presentNotification(n) });
+});
+
+router.delete('/notifications/:id', async (req, res) => {
+  const n = await Notification.findByIdAndDelete(req.params.id).catch(() => null);
+  if (!n) return res.status(404).json({ error: 'Notification not found' });
+  res.json({ ok: true });
 });
 
 module.exports = router;

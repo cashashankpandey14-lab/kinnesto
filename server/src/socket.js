@@ -33,4 +33,10 @@ function emitToUser(userId, event, payload) {
   if (io) io.to(`user:${String(userId)}`).emit(event, payload);
 }
 
-module.exports = { initSocket, emitToUser, disconnectUser };
+// Everyone currently connected. Used for announcements; people who are offline pick them up
+// from the notifications list the next time they open the app.
+function emitToAll(event, payload) {
+  if (io) io.emit(event, payload);
+}
+
+module.exports = { initSocket, emitToUser, emitToAll, disconnectUser };

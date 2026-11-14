@@ -31,6 +31,8 @@ const userSchema = new Schema(
     blocked: [ref('User')],
     isDemo: { type: Boolean, default: false },
     lastActive: { type: Date, default: Date.now },
+    // When they last opened the notifications screen; anything newer counts as unread.
+    notificationsReadAt: Date,
   },
   { timestamps: true }
 );
@@ -133,8 +135,22 @@ const reportSchema = new Schema(
   { timestamps: true }
 );
 
+// Announcements the team sends to everyone. One document per announcement rather than one per
+// member, so sending to the whole base stays a single write; each member's read state is the
+// notificationsReadAt stamp on their own record.
+const notificationSchema = new Schema(
+  {
+    title: { type: String, required: true, trim: true, maxlength: 80 },
+    body: { type: String, trim: true, maxlength: 500, default: '' },
+    audience: { type: String, enum: ['all'], default: 'all' },
+    sentBy: ref('User'),
+  },
+  { timestamps: true }
+);
+
 module.exports = {
   User: model('User', userSchema),
+  Notification: model('Notification', notificationSchema),
   Listing: model('Listing', listingSchema),
   Swipe: model('Swipe', swipeSchema),
   Interest: model('Interest', interestSchema),
