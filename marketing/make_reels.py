@@ -38,6 +38,22 @@ def wrap(d, text, font, maxw):
     return lines + [cur]
 
 
+def url_badge(text='kinnesto.com', size=52):
+    """A small gold pill carrying the address, kept on screen for the whole clip. The end card only
+    shows for the last 3 seconds, and most people have scrolled by then, so the one thing they need
+    in order to act has to be visible from the first frame."""
+    f = ImageFont.truetype(BOLD, size)
+    d0 = ImageDraw.Draw(Image.new('RGBA', (10, 10)))
+    tw = int(d0.textlength(text, font=f))
+    padx, pady = 42, 26
+    w, h = tw + 2 * padx, size + 2 * pady
+    im = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle([0, 0, w - 1, h - 1], radius=h // 2, fill=(*INK, 225))
+    d.text((padx, pady - 4), text, font=f, fill=GOLD)
+    return im
+
+
 def caption(text, w, size, sub=None):
     """A caption card: white headline (and optional gold subline) on a soft dark band, transparent elsewhere.
     Lines wrap inside side margins so nothing reaches the frame edge or the platform's side buttons."""
@@ -104,6 +120,7 @@ def main():
     caption('Swipe. Match. Move in.', 1080, 84, 'Rooms and flatmates, matched on how you live').save(tmp / 'c2.png')
     caption('No brokers. Just your people.', 1080, 78).save(tmp / 'c3.png')
     caption('Find your place in Mumbai.', 1920, 96, 'Flats, PGs, co-living and flatmates. No brokers.').save(tmp / 'c4.png')
+    url_badge().save(tmp / 'url-v.png')
     end_card(1080, 1920).save(tmp / 'end-v.png')
     end_card(1920, 1080).save(tmp / 'end-h.png')
 
@@ -112,14 +129,16 @@ def main():
     fc = (
         '[0:v]setpts=PTS-STARTPTS,fps=30[v0];[1:v]setpts=PTS-STARTPTS,fps=30[v1];'
         '[2:v]loop=loop=-1:size=1,trim=duration=3,fps=30,setpts=PTS-STARTPTS,format=yuv420p[v2];'
-        "[v0][3:v]overlay=0:300:enable='between(t,0.3,3)'[a0];[a0][4:v]overlay=0:300:enable='between(t,3,6.1)'[b0];"
-        "[v1][5:v]overlay=0:300:enable='between(t,0.5,6.1)'[b1];"
+        "[v0][3:v]overlay=0:300:enable='between(t,0.3,3)'[a0];[a0][4:v]overlay=0:300:enable='between(t,3,6.1)'[a1];"
+        "[v1][5:v]overlay=0:300:enable='between(t,0.5,6.1)'[a2];"
+        # The address rides along the whole way, clear of Instagram's own bottom controls.
+        '[7:v]split=2[u0][u1];[a1][u0]overlay=(W-w)/2:1480[b0];[a2][u1]overlay=(W-w)/2:1480[b1];'
         '[0:a]asetpts=PTS-STARTPTS[x0];[1:a]asetpts=PTS-STARTPTS[x1];[6:a]atrim=duration=3[x2];'
         '[b0][x0][b1][x1][v2][x2]concat=n=3:v=1:a=1[v][a]'
     )
     run(['-i', str(R / 'clip-01-platform-relief.mp4'), '-i', str(R / 'clip-02-move-in.mp4'), '-i', str(tmp / 'end-v.png'),
          '-i', str(tmp / 'c1.png'), '-i', str(tmp / 'c2.png'), '-i', str(tmp / 'c3.png'),
-         '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=48000',
+         '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=48000', '-i', str(tmp / 'url-v.png'),
          '-filter_complex', fc, '-map', '[v]', '-map', '[a]', '-shortest', *enc, str(R / 'reel-live-action-15s.mp4')])
 
     # 4. Landscape 9 s spot: the sea link with a caption, then a 3 s end card.
