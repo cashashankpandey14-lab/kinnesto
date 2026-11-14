@@ -15,6 +15,33 @@ fs.copyFileSync(path.join(root, '.vercelignore'), path.join(dist, '.vercelignore
 fs.copyFileSync(path.join(root, 'assets', 'icon.png'), path.join(dist, 'icon.png'));
 fs.copyFileSync(path.join(root, 'assets', 'og.png'), path.join(dist, 'og.png'));
 
+// Expo exports bundled fonts and icons under assets/node_modules/..., and Vercel never uploads a
+// path containing a node_modules segment, so those files 404 to index.html in production — which
+// silently drops every Ionicons glyph and every custom font. Move them somewhere Vercel will take.
+function unNodeModules() {
+  const from = path.join(dist, 'assets', 'node_modules');
+  if (!fs.existsSync(from)) return 0;
+  fs.cpSync(from, path.join(dist, 'assets', 'vendor'), { recursive: true });
+  fs.rmSync(from, { recursive: true, force: true });
+  let patched = 0;
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (/\.(js|html|json|css|map)$/.test(e.name)) {
+        const text = fs.readFileSync(p, 'utf8');
+        if (text.includes('assets/node_modules/')) {
+          fs.writeFileSync(p, text.split('assets/node_modules/').join('assets/vendor/'));
+          patched += 1;
+        }
+      }
+    }
+  };
+  walk(dist);
+  return patched;
+}
+console.log(`postexport: moved assets/node_modules -> assets/vendor, rewrote ${unNodeModules()} files`);
+
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'Organization', name: 'Kinnesto', url: SITE, logo: `${SITE}/icon.png` },
   { '@context': 'https://schema.org', '@type': 'WebSite', name: 'Kinnesto', url: SITE, description: DESC, inLanguage: 'en-IN' },

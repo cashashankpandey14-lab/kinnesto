@@ -6,6 +6,9 @@ import { Platform } from 'react-native';
 function resolveBaseUrl() {
   const fromEnv = process.env.EXPO_PUBLIC_API_URL;
   if (fromEnv) return fromEnv.replace(/\/$/, '');
+  // A release build made without EXPO_PUBLIC_API_URL used to fall through to localhost, which
+  // shipped a site that silently couldn't reach its own API. Production defaults to the real one.
+  if (!__DEV__) return 'https://api.kinnesto.com';
   if (Platform.OS === 'web') return 'http://localhost:4100';
   const host = Constants.expoConfig?.hostUri?.split(':')[0];
   return `http://${host || 'localhost'}:4100`;
