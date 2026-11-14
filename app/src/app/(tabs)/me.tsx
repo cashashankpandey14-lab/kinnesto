@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { Image, Pressable, View } from 'react-native';
 import { Text } from '@/components/Text';
 import { ListingTile } from '@/components/Cards';
+import { NotificationsRow } from '@/components/NotificationsRow';
 import { Button, Card, Chip, confirm, notify, Screen, SectionTitle } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
@@ -70,6 +71,8 @@ export default function MeTab() {
         {strength < 100 && <Text style={{ color: colors.muted, marginTop: 8, fontSize: 13 }}>More photos, lifestyle answers and a bio make your vibe scores more accurate.</Text>}
         <Button title="Edit profile" variant="secondary" icon="create-outline" onPress={() => router.push('/edit-profile')} style={{ marginTop: 14 }} />
       </Card>
+
+      <NotificationsRow />
 
       {user.isAdmin && (
         <Card style={{ marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.ink, borderColor: colors.ink }}>

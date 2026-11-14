@@ -5,7 +5,7 @@ import { tokenStore } from './storage';
 import type { Me, Options } from './types';
 
 type Listener = (payload: any) => void;
-const EVENTS = ['match', 'message', 'unmatch', 'read', 'request', 'request-update'];
+const EVENTS = ['match', 'message', 'unmatch', 'read', 'request', 'request-update', 'notification'];
 
 interface AuthState {
   ready: boolean;

@@ -3,14 +3,17 @@ import { router, Stack } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text, TextInput } from '@/components/Text';
-import { Button, Card, confirm, Empty, Loading, notify, Screen, Segmented } from '@/components/ui';
+import { AdminMemberEditor } from '@/components/AdminMemberEditor';
+import { Button, Card, confirm, Empty, Field, Loading, notify, Screen, Segmented } from '@/components/ui';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { priceLabel, shortTime } from '@/lib/format';
 import { colors, radius } from '@/lib/theme';
-import type { Listing } from '@/lib/types';
+import type { Listing, Notification } from '@/lib/types';
 
-type Tab = 'overview' | 'users' | 'listings' | 'reports';
+type SentNotification = Notification & { sentBy: string | null };
+
+type Tab = 'overview' | 'users' | 'listings' | 'reports' | 'notify';
 
 interface Stats {
   users: { total: number; onboarded: number; newThisWeek: number; activeThisWeek: number; banned: number };
@@ -116,6 +119,7 @@ function Search({ value, onChange, placeholder }: { value: string; onChange: (s:
 
 function Users() {
   const [q, setQ] = useState('');
+  const [editing, setEditing] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'incomplete' | 'banned'>('all');
   const [data, setData] = useState<{ users: UserRow[]; total: number } | null>(null);
 
@@ -176,6 +180,7 @@ function Users() {
               <View style={[styles.status, { backgroundColor: u.banned ? '#FDE7EA' : u.onboarded ? colors.seaSoft : colors.marigoldSoft }]}>
                 <Text style={[styles.statusText, { color: u.banned ? colors.nope : u.onboarded ? colors.sea : colors.brandDark }]}>{u.banned ? 'Banned' : u.onboarded ? 'Active' : 'Incomplete'}</Text>
               </View>
+              <Button title="Edit" small variant="secondary" icon="create-outline" onPress={() => setEditing(u.id)} />
               <Button title={u.banned ? 'Unban' : 'Ban'} small variant="secondary" onPress={() => ban(u)} />
               <Pressable onPress={() => remove(u)} accessibilityLabel={`Delete ${u.email}`} hitSlop={8} style={{ padding: 6 }}>
                 <Ionicons name="trash-outline" size={18} color={colors.nope} />
@@ -184,6 +189,7 @@ function Users() {
           ))}
         </Card>
       )}
+      {editing && <AdminMemberEditor userId={editing} onClose={() => setEditing(null)} onSaved={load} />}
     </View>
   );
 }
@@ -317,6 +323,89 @@ function Reports() {
   );
 }
 
+function Notify() {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [data, setData] = useState<{ notifications: SentNotification[]; recipients: number } | null>(null);
+
+  const load = useCallback(async () => setData(await api('/admin/notifications')), []);
+  useEffect(() => {
+    load().catch((e) => notify('Couldn’t load notifications', e.message));
+  }, [load]);
+
+  async function send() {
+    if (!title.trim()) return notify('Add a title', 'The title is what members see first.');
+    if (!(await confirm('Send to everyone?', `“${title.trim()}” goes to all ${data?.recipients ?? 0} members. It can’t be unsent.`, 'Send'))) return;
+    setBusy(true);
+    try {
+      await api('/admin/notifications', { method: 'POST', body: { title, body } });
+      setTitle('');
+      setBody('');
+      await load();
+      notify('Sent', 'Everyone online sees it now; the rest on their next visit.');
+    } catch (e: any) {
+      notify('Couldn’t send', e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(n: SentNotification) {
+    if (!(await confirm('Delete this notification?', 'It disappears from everyone’s list. People who already read it won’t see it again.', 'Delete'))) return;
+    try {
+      await api(`/admin/notifications/${n.id}`, { method: 'DELETE' });
+      load();
+    } catch (e: any) {
+      notify('Couldn’t delete', e.message);
+    }
+  }
+
+  return (
+    <View style={{ gap: 14 }}>
+      <Card>
+        <Text style={styles.cardTitle}>New announcement</Text>
+        <Field label="Title" value={title} onChangeText={setTitle} placeholder="Kinnesto is live in Mumbai" maxLength={80} />
+        <Field
+          label="Message"
+          hint="Optional. Keep it short — it shows under the title."
+          value={body}
+          onChangeText={setBody}
+          placeholder="Browse new PGs and flats added this week."
+          multiline
+          numberOfLines={3}
+          maxLength={500}
+          style={{ height: 88, textAlignVertical: 'top', paddingTop: 12 }}
+        />
+        <Button title={`Send to all ${data ? data.recipients.toLocaleString('en-IN') : ''} members`} icon="megaphone-outline" onPress={send} loading={busy} style={{ marginTop: 14 }} />
+      </Card>
+
+      {!data ? (
+        <Loading />
+      ) : !data.notifications.length ? (
+        <Empty icon="megaphone-outline" title="Nothing sent yet" body="Announcements you send appear here." />
+      ) : (
+        <Card style={{ padding: 0 }}>
+          <Text style={[styles.countLine, { padding: 16, paddingBottom: 4 }]}>{data.notifications.length} sent</Text>
+          {data.notifications.map((n) => (
+            <View key={n.id} style={styles.row}>
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text style={styles.rowTitle} numberOfLines={1}>{n.title}</Text>
+                <Text style={styles.rowSub} numberOfLines={2}>
+                  {n.body ? `${n.body} · ` : ''}sent {shortTime(n.createdAt)}{n.sentBy ? ` by ${n.sentBy}` : ''}
+                </Text>
+              </View>
+              <Pressable onPress={() => remove(n)} accessibilityLabel={`Delete ${n.title}`} hitSlop={8} style={{ padding: 6 }}>
+                <Ionicons name="trash-outline" size={18} color={colors.nope} />
+              </Pressable>
+            </View>
+          ))}
+        </Card>
+      )}
+    </View>
+  );
+}
+
 export default function Admin() {
   const { user } = useAuth();
   const { width } = useWindowDimensions();
@@ -348,6 +437,7 @@ export default function Admin() {
               ['users', 'Users'],
               ['listings', 'Listings'],
               ['reports', `Reports${stats?.openReports ? ` (${stats.openReports})` : ''}`],
+              ['notify', 'Notify'],
             ]}
           />
         </View>
@@ -356,6 +446,7 @@ export default function Admin() {
       {tab === 'users' && <Users />}
       {tab === 'listings' && <Listings />}
       {tab === 'reports' && <Reports />}
+      {tab === 'notify' && <Notify />}
     </Screen>
   );
 }

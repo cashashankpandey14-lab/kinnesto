@@ -114,3 +114,10 @@ export interface RequestItem {
   user: Person;
   listing: Listing;
 }
+
+export interface Notification {
+  id: string;
+  title: string;
+  body: string;
+  createdAt: string;
+}
