@@ -10,6 +10,14 @@ const SITE = seo.SITE;
 const TITLE = 'Kinnesto: PG, Flats & Flatmates in Mumbai – No Broker';
 const DESC = 'Find PGs, flats, hostels, co-living and stays across Mumbai, and match with flatmates on budget, timing and lifestyle. Free, no brokerage.';
 
+// `expo export --clear` wipes web-build, taking the .vercel link with it. Without it the next
+// `vercel deploy` silently creates a NEW project named after the folder instead of updating
+// kinnesto.com, so the link is rewritten here every time. These ids identify the project; they
+// are not credentials.
+const VERCEL_PROJECT = { projectId: 'prj_vZsavgWj91bLne1kx2mp62oW2rlW', orgId: 'team_kJMWkkWXDRO1LXdG5ktxQCo7', projectName: 'kinnesto' };
+fs.mkdirSync(path.join(dist, '.vercel'), { recursive: true });
+fs.writeFileSync(path.join(dist, '.vercel', 'project.json'), JSON.stringify(VERCEL_PROJECT));
+
 fs.copyFileSync(path.join(root, 'vercel.json'), path.join(dist, 'vercel.json'));
 fs.copyFileSync(path.join(root, '.vercelignore'), path.join(dist, '.vercelignore'));
 fs.copyFileSync(path.join(root, 'assets', 'icon.png'), path.join(dist, 'icon.png'));
