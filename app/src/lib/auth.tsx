@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { io, type Socket } from 'socket.io-client';
-import { api, API_URL, setApiToken } from './api';
+import { api, API_URL, setApiToken, wake } from './api';
 import { tokenStore } from './storage';
 import type { Me, Options } from './types';
 
@@ -43,6 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     (async () => {
+      // Nudge the API awake before anyone taps anything; it sleeps when idle and is slow to start.
+      wake();
       // Older servers don't send LAUNCH_CITIES; default to Mumbai so city pickers never break.
       const opts = api<Options>('/options')
         .then((o) => setOptions({ ...o, LAUNCH_CITIES: o.LAUNCH_CITIES ?? ['Mumbai'] }))

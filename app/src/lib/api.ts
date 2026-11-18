@@ -33,20 +33,46 @@ async function handle<T>(res: Response): Promise<T> {
   return data as T;
 }
 
-export async function api<T = any>(path: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
-  let res: Response;
-  try {
-    res = await fetch(`${API_URL}/api${path}`, {
-      method: opts.method || 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
-    });
-  } catch {
-    throw new ApiError(`Can't reach the server at ${API_URL}`, 0);
+// The API sleeps after a spell of no traffic on its current hosting plan, and the first request
+// afterwards can take the best part of a minute. Calling this early — at app start — means that
+// wait happens while someone is still reading the welcome screen, not when they tap a button.
+let waking: Promise<void> | null = null;
+export function wake() {
+  if (!waking) {
+    waking = fetch(`${API_URL}/api/health`)
+      .then(
+        () => {},
+        () => {}
+      )
+      .finally(() => {
+        waking = null;
+      });
   }
+  return waking;
+}
+
+// A dropped request is far more often the server still waking than a real outage, so try once more.
+async function send(path: string, init: RequestInit) {
+  try {
+    return await fetch(`${API_URL}/api${path}`, init);
+  } catch {
+    try {
+      return await fetch(`${API_URL}/api${path}`, init);
+    } catch {
+      throw new ApiError(`Can't reach the server at ${API_URL}`, 0);
+    }
+  }
+}
+
+export async function api<T = any>(path: string, opts: { method?: string; body?: unknown } = {}): Promise<T> {
+  const res = await send(path, {
+    method: opts.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    },
+    body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+  });
   return handle<T>(res);
 }
 
@@ -66,15 +92,10 @@ export async function upload<T = any>(path: string, field: string, file: LocalFi
   } else {
     form.append(field, { uri: file.uri, name: file.name, type: file.type } as any);
   }
-  let res: Response;
-  try {
-    res = await fetch(`${API_URL}/api${path}`, {
-      method: 'POST',
-      headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
-      body: form,
-    });
-  } catch {
-    throw new ApiError(`Can't reach the server at ${API_URL}`, 0);
-  }
+  const res = await send(path, {
+    method: 'POST',
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
+    body: form,
+  });
   return handle<T>(res);
 }

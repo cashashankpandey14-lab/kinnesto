@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { api } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { colors, radius } from '@/lib/theme';
@@ -87,6 +87,16 @@ export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError:
   }
 
   const web = Platform.OS === 'web';
+  // Until the server answers, show the button greyed out rather than nothing at all. A sleeping
+  // API can take most of a minute to reply, and an empty space reads as "Google sign-in is gone".
+  if (!ids && Platform.OS !== 'ios') {
+    return (
+      <View style={[styles.waking, { marginBottom: 6 }]}>
+        <ActivityIndicator size="small" color={colors.muted} />
+        <Text style={{ color: colors.muted, fontWeight: '700', fontSize: 15 }}>Connecting…</Text>
+      </View>
+    );
+  }
   if (!ids || (!ids.google && !(web && ids.facebook))) return null;
   return (
     <View style={{ gap: 12, marginBottom: 6 }}>
@@ -108,6 +118,7 @@ export function SocialSignIn({ onDone, onError }: { onDone: () => void; onError:
 
 const styles = StyleSheet.create({
   google: { minHeight: 44, alignItems: 'center' },
+  waking: { height: 48, borderRadius: radius.pill, borderWidth: 1.5, borderColor: colors.line, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
   fb: { height: 46, borderRadius: radius.pill, backgroundColor: '#1877F2', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
   fbText: { color: '#fff', fontWeight: '800', fontSize: 15 },
   or: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 8 },
