@@ -9,3 +9,6 @@ server/uploads/
 *.log
 marketing/reels/_build/
 release/
+
+# Google service account key used by `eas submit` to upload to Play. Never commit it.
+play-service-account.json
