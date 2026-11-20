@@ -17,6 +17,14 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' }, contentS
 app.use(cors({ origin: (origin, cb) => cb(null, !origin || config.corsOrigins.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) }));
 app.use(express.json({ limit: '200kb' }));
 
+// One line per request. Without it, "sign-in doesn't work" can't be told apart from a request that
+// never reached us at all, which is most of what has made these faults so slow to pin down.
+app.use((req, res, next) => {
+  const started = Date.now();
+  res.on('finish', () => console.log(`${req.method} ${req.originalUrl} ${res.statusCode} ${Date.now() - started}ms`));
+  next();
+});
+
 const tooMany = { error: 'Too many attempts. Please wait a few minutes and try again.' };
 // Only sign-in actions are throttled (not /auth/providers, which every sign-in screen loads).
 const authLimit = rateLimit({ windowMs: 15 * 60 * 1000, limit: 60, standardHeaders: true, legacyHeaders: false, message: tooMany });

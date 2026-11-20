@@ -73,7 +73,10 @@ router.post('/google', async (req, res) => {
   try {
     const ticket = await google.verifyIdToken({ idToken: String(req.body.credential || ''), audience: config.googleClientId });
     payload = ticket.getPayload();
-  } catch {
+  } catch (err) {
+    // The caller gets a vague message on purpose; the log gets the real reason (wrong audience,
+    // expired token, bad signature), which is the only way to tell those apart from outside.
+    console.warn('Google ID token rejected:', err.message);
     return res.status(401).json({ error: 'Google sign-in failed, please try again' });
   }
   if (!payload?.email || !payload.email_verified) return res.status(401).json({ error: 'Your Google email is not verified' });
