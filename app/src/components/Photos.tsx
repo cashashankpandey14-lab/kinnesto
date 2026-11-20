@@ -89,11 +89,18 @@ export function ProfilePhotos() {
       aspect={3 / 4}
       uploading={uploading}
       onAdd={async () => {
-        const file = await pickImage([3, 4]);
-        if (!file) return;
-        setUploading(true);
-        await run(() => upload('/me/photos', 'photo', file), 'Upload failed');
-        setUploading(false);
+        // A throw from the picker used to reject into nothing: no message, no upload, no trace
+        // anywhere. Whatever goes wrong here, the member should at least be told what it was.
+        try {
+          const file = await pickImage([3, 4]);
+          if (!file) return;
+          setUploading(true);
+          await run(() => upload('/me/photos', 'photo', file), 'Upload failed');
+        } catch (e: any) {
+          notify('Could not open your photos', e.message);
+        } finally {
+          setUploading(false);
+        }
       }}
       onRemove={(i) => run(() => api(`/me/photos/${i}`, { method: 'DELETE' }), 'Could not remove photo')}
       onMain={(i) => run(() => api(`/me/photos/${i}/main`, { method: 'POST' }), 'Could not reorder')}
@@ -111,10 +118,10 @@ export function ListingPhotos({ photos, onChange }: { photos: string[]; onChange
       aspect={4 / 3}
       uploading={uploading}
       onAdd={async () => {
-        const file = await pickImage([4, 3]);
-        if (!file) return;
-        setUploading(true);
         try {
+          const file = await pickImage([4, 3]);
+          if (!file) return;
+          setUploading(true);
           const { url } = await upload<{ url: string }>('/listings/photos', 'photo', file);
           onChange([...photos, url]);
         } catch (e: any) {
