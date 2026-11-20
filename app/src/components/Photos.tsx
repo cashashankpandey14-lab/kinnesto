@@ -1,18 +1,42 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '@/components/Text';
-import { api, upload } from '@/lib/api';
+import { api, upload, type LocalFile } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 import { colors, radius } from '@/lib/theme';
 import { notify } from './ui';
 
+// fileName and mimeType are both documented as sometimes null on Android.
+const assetToFile = (a: ImagePicker.ImagePickerAsset): LocalFile => ({ uri: a.uri, name: a.fileName || 'photo.jpg', type: a.mimeType || 'image/jpeg' });
+
 async function pickImage(aspect: [number, number]) {
   const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect, quality: 0.8 });
   if (result.canceled) return null;
-  const a = result.assets[0];
-  return { uri: a.uri, name: a.fileName || 'photo.jpg', type: a.mimeType || 'image/jpeg' };
+  return assetToFile(result.assets[0]);
+}
+
+// Android may kill MainActivity while the picker (and its cropper) is in front, which on a phone
+// that is short of memory is ordinary behaviour, not a fault. The pick is then lost: the promise
+// from launchImageLibraryAsync never settles, so there is nothing to catch and nothing to show,
+// and the tap simply looks ignored. Expo keeps the result and hands it over on the next launch.
+let pendingTaken = false;
+
+function usePendingPick(use: (file: LocalFile) => void) {
+  useEffect(() => {
+    if (Platform.OS !== 'android' || pendingTaken) return;
+    pendingTaken = true; // whoever mounts first claims it; it is only ever one pick
+    ImagePicker.getPendingResultAsync()
+      .then((res) => {
+        if (!res) return; // null on every other platform, and when nothing was lost
+        if ('code' in res) return notify('Could not open your photos', res.message);
+        if (!res.canceled && res.assets[0]) use(assetToFile(res.assets[0]));
+      })
+      .catch(() => {});
+    // Deliberately once per mount: a recovered pick is handed back exactly once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 }
 
 function Grid({
@@ -72,7 +96,6 @@ function Grid({
 export function ProfilePhotos() {
   const { user, apply } = useAuth();
   const [uploading, setUploading] = useState(false);
-  if (!user) return null;
 
   const run = async (fn: () => Promise<any>, failTitle: string) => {
     try {
@@ -81,6 +104,15 @@ export function ProfilePhotos() {
       notify(failTitle, e.message);
     }
   };
+
+  const send = async (file: LocalFile) => {
+    setUploading(true);
+    await run(() => upload('/me/photos', 'photo', file), 'Upload failed');
+    setUploading(false);
+  };
+
+  usePendingPick(send);
+  if (!user) return null;
 
   return (
     <Grid
@@ -93,12 +125,9 @@ export function ProfilePhotos() {
         // anywhere. Whatever goes wrong here, the member should at least be told what it was.
         try {
           const file = await pickImage([3, 4]);
-          if (!file) return;
-          setUploading(true);
-          await run(() => upload('/me/photos', 'photo', file), 'Upload failed');
+          if (file) await send(file);
         } catch (e: any) {
           notify('Could not open your photos', e.message);
-        } finally {
           setUploading(false);
         }
       }}
