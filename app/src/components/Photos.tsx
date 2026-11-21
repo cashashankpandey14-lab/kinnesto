@@ -12,7 +12,12 @@ import { notify } from './ui';
 const assetToFile = (a: ImagePicker.ImagePickerAsset): LocalFile => ({ uri: a.uri, name: a.fileName || 'photo.jpg', type: a.mimeType || 'image/jpeg' });
 
 async function pickImage(aspect: [number, number]) {
-  const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect, quality: 0.8 });
+  // Android picks were dying at the crop step: the crop screen never appeared, nothing threw and
+  // nothing crashed, so the tap just looked ignored while no upload was ever attempted. Skipping
+  // the editor there costs little, since every photo is displayed cover-cropped to its cell shape
+  // anyway. iOS keeps the editor, where it has always worked.
+  const allowsEditing = Platform.OS !== 'android';
+  const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing, aspect, quality: 0.8 });
   if (result.canceled) return null;
   return assetToFile(result.assets[0]);
 }
